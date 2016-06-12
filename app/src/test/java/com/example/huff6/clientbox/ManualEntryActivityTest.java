@@ -1,24 +1,17 @@
 package com.example.huff6.clientbox;
 
 
+
+import org.junit.Test;
+
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-/**
- * Created by huff6 on 6/8/2016.
- */
+
 public class ManualEntryActivityTest {
 
-    public void onClickLookupClientTest() {
-        // onClickLookupClient(ServerConnection) : void
-
-    }
-
-    public void onClickSubmitTest() {
-        // onClickSubmit() : void
-    }
-
+    @Test
     public void updateTest() {
         // update(Time, Time) : void
 
@@ -33,7 +26,7 @@ public class ManualEntryActivityTest {
     }
 
 
-
+    @Test
     public void validateTimeTest() {
         // validateTime( start Time, stop Time) : void
 

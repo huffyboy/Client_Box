@@ -16,20 +16,22 @@ public class TimerActivityTest {
     TimerActivity myObjectUnderTest = new TimerActivity();
 
     @Test
-    public void onClickManualEntry() throws Exception {
+    public void testFunctionCall() throws Exception {
+
+        myObjectUnderTest.onClickManualEntry();
         // ...when the int is returned from the object under test...
-        int result = myObjectUnderTest.getValue();
+        long result = myObjectUnderTest.getTime();
         assertNotNull(result);
     }
 
 
     @Test
-    public void onClickStartStop() throws Exception {
+    public void testValidTime() throws Exception {
 
         // ...when the bool is returned from the object under test...
-        Boolean result = myObjectUnderTest.getTimer();
+        //int result = myObjectUnderTest.onClickStartStop();
 
         // ...then the result should be the expected one.
-        assertTrue(result);
+        //assert(result > 0);
     }
 }
