@@ -10,4 +10,8 @@ public class AddClientActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_client);
     }
+
+    void addClient(){
+        //adds a client and then returns to main menu?
+    }
 }
