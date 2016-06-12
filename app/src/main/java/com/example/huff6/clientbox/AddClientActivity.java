@@ -45,7 +45,13 @@ public class AddClientActivity extends AppCompatActivity {
         }
     }
 
-    void addClient(){
-        //adds a client and then returns to main menu?
+
+    public void onChangeValidateName()
+    {
     }
+
+    public void onChangeValidateNumber()
+    {
+    }
+
 }
