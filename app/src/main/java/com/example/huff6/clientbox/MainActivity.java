@@ -7,6 +7,7 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
+    //We need a thread singleton object here
 
     public static final String MESSAGE = "com.example.huff6.clientbox.AddClientActivity";
     public static final String MESSAGE2 = "com.example.huff6.clientbox.TimerActivity";

@@ -8,65 +8,59 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.huff6.clientbox.MainActivity"
-    android:background="@color/abc_input_method_navigation_guard">
+    android:minWidth="100dp">
 
     <Button
-        android:layout_width="300dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Timer"
         android:id="@+id/button"
-        android:layout_above="@+id/button1"
-        android:layout_alignLeft="@+id/button1"
-        android:layout_alignStart="@+id/button1"
-        android:layout_marginBottom="25dp"
-        android:backgroundTint="@android:color/holo_blue_light"
-        android:textSize="18dp"
-        android:onClick="goToTimer" />
+        android:layout_marginTop="80dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/button2"
+        android:layout_alignEnd="@+id/button2"
+        android:layout_alignLeft="@+id/button2"
+        android:layout_alignStart="@+id/button2" />
 
     <Button
-        android:layout_width="300dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Manual Entry"
-        android:id="@+id/button1"
-        android:layout_above="@+id/button2"
+        android:id="@+id/button2"
+        android:layout_below="@+id/button"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Client History"
+        android:id="@+id/button3"
+        android:layout_below="@+id/button2"
         android:layout_alignLeft="@+id/button2"
         android:layout_alignStart="@+id/button2"
-        android:layout_marginBottom="25dp"
-        android:backgroundTint="@android:color/holo_blue_light"
-        android:textSize="18dp"
-        android:onClick="goToManualEntry" />
+        android:layout_alignRight="@+id/button2"
+        android:layout_alignEnd="@+id/button2" />
 
     <Button
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:text="Client Lookup"
-        android:id="@+id/button2"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:backgroundTint="@android:color/holo_blue_light"
-        android:textSize="18dp"
-        android:onClick="goToClientLookup" />
-
-    <Button
-        android:layout_width="300dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Add Client"
-        android:id="@+id/button3"
-        android:layout_marginTop="25dp"
-        android:layout_below="@+id/button2"
-        android:layout_centerHorizontal="true"
-        android:backgroundTint="@android:color/holo_blue_light"
-        android:textSize="18dp"
-        android:onClick="goToAddClient" />
+        android:id="@+id/button4"
+        android:layout_below="@+id/button3"
+        android:layout_alignLeft="@+id/button3"
+        android:layout_alignStart="@+id/button3"
+        android:layout_alignRight="@+id/button2"
+        android:layout_alignEnd="@+id/button2" />
 
     <Button
-        android:layout_width="300dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Sync"
-        android:id="@+id/button4"
-        android:layout_marginTop="25dp"
-        android:layout_below="@+id/button3"
-        android:layout_centerHorizontal="true"
-        android:backgroundTint="@android:color/holo_blue_light"
-        android:textSize="18dp" />
+        android:id="@+id/button5"
+        android:maxWidth="200dp"
+        android:layout_below="@+id/button4"
+        android:layout_alignLeft="@+id/button4"
+        android:layout_alignStart="@+id/button4"
+        android:layout_alignRight="@+id/button4"
+        android:layout_alignEnd="@+id/button4" />
 </RelativeLayout>

@@ -44,4 +44,14 @@ public class AddClientActivity extends AppCompatActivity {
             System.out.println(e.getMessage());
         }
     }
+
+
+    public void onChangeValidateName()
+    {
+    }
+
+    public void onChangeValidateNumber()
+    {
+    }
+
 }
