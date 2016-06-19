@@ -7,7 +7,7 @@ import android.widget.ArrayAdapter;
 public class ClientLookupActivity extends AppCompatActivity {
 
     Client client;
-    ArrayAdapter<client> clientList;
+    ArrayAdapter<Client> clientList;
     //previous view - i think this is handled in the intent that should be passed
 
     @Override

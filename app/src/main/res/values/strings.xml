@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Client Box</string>
+    <string name="update" />
+    <string name="sync" />
+    <string name="add" />
+    <string name="view" />
 </resources>
