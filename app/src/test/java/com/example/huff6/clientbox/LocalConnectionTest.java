@@ -12,7 +12,7 @@ import static org.junit.Assert.assertTrue;
 public class LocalConnectionTest {
 
     LocalConnection myObjectUnderTest = new LocalConnection();
-
+//test
     @Test
     public void updateQueueTest() throws Exception {
         // ...when the int is returned from the object under test...
