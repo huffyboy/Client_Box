@@ -4,4 +4,5 @@
     <string name="sync" />
     <string name="add" />
     <string name="view" />
+    <string name="name">Name</string>
 </resources>

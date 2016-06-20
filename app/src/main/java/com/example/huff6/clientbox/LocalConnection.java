@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Queue;
 
 /**
- * Created by joshu on 6/6/2016.
+ * Created by joshu on 6/6/2016
  */
 public class LocalConnection {
     Queue<Log> logs;

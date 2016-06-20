@@ -9,8 +9,6 @@ import android.widget.Toast;
 
 public class AddClientActivity extends AppCompatActivity {
 
-
-    public static final String EXTRA_MESSAGE = "com.example.huff6.clientbox.MainActivity";
     EditText name;
     EditText phone;
 
@@ -18,13 +16,9 @@ public class AddClientActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_client);
-
-        Intent intent = getIntent();
-        String message = intent.getStringExtra(MainActivity.MESSAGE);
     }
 
     public void addClient(View v) {
-
         name = (EditText) findViewById(R.id.name);
         phone = (EditText) findViewById(R.id.phone);
 
@@ -35,12 +29,10 @@ public class AddClientActivity extends AppCompatActivity {
 
         //go back to main page
         try {
-            // move on to the main page
             Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra(EXTRA_MESSAGE, "");
+            intent.putExtra(MainActivity.MAIN_ACTIVITY, "");
             startActivity(intent);
-        }
-        catch(Exception e){
+        } catch(Exception e) {
             System.out.println(e.getMessage());
         }
     }
