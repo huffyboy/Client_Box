@@ -158,7 +158,7 @@ public class ManualEntryActivity extends AppCompatActivity {
     };
 
 //////////////////////////////////
-
+//
 
 
     public void update(String startInput, String stopInput) {
