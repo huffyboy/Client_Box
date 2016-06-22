@@ -9,7 +9,6 @@ import android.widget.EditText;
 
 public class LoginActivity extends AppCompatActivity {
 
-    public static final String EXTRA_MESSAGE = "com.example.huff6.clientbox.MainActivity";
     EditText username;
     EditText password;
     CheckBox stayLoggedIn;
@@ -32,15 +31,11 @@ public class LoginActivity extends AppCompatActivity {
         //if not valid display error message here
 
         //it valid connect to database and move on to main page
-
-
         try {
-            // move on to the main page
             Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra(EXTRA_MESSAGE, "");
+            intent.putExtra(MainActivity.MAIN_ACTIVITY, "");
             startActivity(intent);
-        }
-        catch(Exception e){
+        } catch(Exception e) {
             System.out.println(e.getMessage());
         }
     }

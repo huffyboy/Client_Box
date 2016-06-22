@@ -10,18 +10,18 @@ import android.widget.Chronometer;
 
  public class TimerActivity extends AppCompatActivity {
 
-     public static final String EXTRA_MESSAGE = "com.example.huff6.clientbox.ManualEntryActivity";
-    Chronometer chronometer;
+     Chronometer chronometer;
      Button startStop;
-    long time = 0;
-    Boolean start = false;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+     long time = 0;
+     Boolean start = false;
+
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timer);
 
         Intent intent = getIntent();
-        String message = intent.getStringExtra(MainActivity.MESSAGE2);
+        String message = intent.getStringExtra(MainActivity.TIMER_ACTIVITY);
 
         chronometer = (Chronometer) findViewById(R.id.chronometer);
         startStop = (Button) findViewById(R.id.btn_toggle_start_stop);
@@ -53,14 +53,13 @@ import android.widget.Chronometer;
          chronometer.setBase(SystemClock.elapsedRealtime());
      }
 
+     // move on to manual entry activity
      public void goToManualEntry(View v){
          try {
-             // move on to the main page
              Intent intent = new Intent(this, ManualEntryActivity.class);
-             intent.putExtra(EXTRA_MESSAGE, "");
+             intent.putExtra(MainActivity.MANUAL_ENTRY_ACTIVITY, "");
              startActivity(intent);
-         }
-         catch(Exception e){
+         } catch(Exception e) {
              System.out.println(e.getMessage());
          }
      }

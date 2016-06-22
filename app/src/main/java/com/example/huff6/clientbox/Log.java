@@ -3,7 +3,7 @@ package com.example.huff6.clientbox;
 
 
 /**
- * Created by joshu on 6/6/2016.
+ * Created by joshu on 6/6/2016
  */
 public class Log {
     private String startTime;
@@ -12,11 +12,10 @@ public class Log {
     private String notes;
 
     Log () {
-        String temp = null;
-        startTime = temp;
-        stopTime = temp;
-        duration = 0;
-        notes = "";
+        startTime = "";
+        stopTime  = "";
+        duration  = 0;
+        notes     = "";
     }
 
     public String getStartTime() {
