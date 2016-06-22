@@ -9,6 +9,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.util.Log;
 
 import java.util.Date;
 
@@ -27,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         myDb = new DatabaseHelper(this);
         updateCallInfo();
     }
@@ -38,8 +38,9 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, AddClientActivity.class);
             intent.putExtra(ADD_CLIENT_ACTIVITY, "");
             startActivity(intent);
+            Log.e("MainActivity", "Cannot go to add client screen");
         } catch(Exception e) {
-            System.out.println(e.getMessage());
+            Log.e("MainActivity", "Cannot go to add client screen");
         }
     }
 
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, TimerActivity.class);
             intent.putExtra(TIMER_ACTIVITY, "");
             startActivity(intent);
+            Log.i("MainActivity", "Timer Activity Button Pressed");
         } catch(Exception e) {
             System.out.println(e.getMessage());
         }
@@ -60,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, ManualEntryActivity.class);
             intent.putExtra(MANUAL_ENTRY_ACTIVITY, "");
             startActivity(intent);
+            Log.i("MainActivity", "Manual Entry Button Pressed");
         } catch(Exception e) {
             System.out.println(e.getMessage());
         }
@@ -71,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, ClientLookupActivity.class);
             intent.putExtra(MainActivity.CLIENT_LOOKUP_ACTIVITY, "");
             startActivity(intent);
+            Log.i("MainActivity", "Client Lookup Button Pressed");
         } catch(Exception e) {
             System.out.println(e.getMessage());
         }
@@ -78,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
 
     void updateCallInfo(){
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
-            System.out.println("No permissions");
+            Log.w("MainActivity","No permissions");
             return;
         }
 
