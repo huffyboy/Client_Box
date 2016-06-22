@@ -47,27 +47,51 @@ public class ManualEntryActivity extends AppCompatActivity {
         time = (Button) findViewById(R.id.selecttime);
         set_date = (TextView) findViewById(R.id.set_date);
         set_time = (TextView) findViewById(R.id.set_time);
-        date.setOnClickListener(new OnClickListener() {
+       // date.setOnClickListener(new OnClickListener() {
 
-            @Override
-            public void onClick(View arg0) {
+         //   @Override
+           // public void onClick(View arg0) {
 
                 // Show Date dialog
-                showDialog(Date_id);
-            }
-        });
-        time.setOnClickListener(new OnClickListener() {
+             //   showDialog(Date_id);
+            ///}
+        //});
+        //time.setOnClickListener(new OnClickListener() {
 
-            @Override
-            public void onClick(View arg0) {
+          //  @Override
+            //public void onClick(View arg0) {
 
                 // Show time dialog
-                showDialog(Time_id);
-            }
-        });
+              //  showDialog(Time_id);
+            //}
+        //});
     }
 
-    public void onClickSubmitManualEntry() {
+    public void startTimeSetter(View v) {
+        // Show time dialog
+        showDialog(Time_id);
+    }
+
+    public void endTimeSetter(View v) {
+        // Show time dialog
+        set_time = (TextView) findViewById(R.id.set_time2);
+        showDialog(Time_id);
+    }
+
+
+    public void startDateSetter(View v) {
+        // Show date dialog
+        showDialog(Date_id);
+    }
+
+
+    public void endDateSetter(View v) {
+        // Show date dialog
+        set_date = (TextView) findViewById(R.id.set_date2);
+        showDialog(Date_id);
+    }
+
+    public void onClickSubmitManualEntry(View v) {
         //submit info to database
 
         //if added:
@@ -115,7 +139,7 @@ public class ManualEntryActivity extends AppCompatActivity {
         @Override
         public void onDateSet(DatePicker view, int year, int month, int day) {
             // store the data in one string and set it to text
-            String date1 = String.valueOf(month) + "/" + String.valueOf(day)
+            String date1 = String.valueOf(month + 1) + "/" + String.valueOf(day)
                     + "/" + String.valueOf(year);
             set_date.setText(date1);
         }
@@ -125,7 +149,10 @@ public class ManualEntryActivity extends AppCompatActivity {
         @Override
         public void onTimeSet(TimePicker view, int hour, int minute) {
             // store the data in one string and set it to text
-            String time1 = String.valueOf(hour) + ":" + String.valueOf(minute);
+            String min = String.valueOf(minute);
+            if (minute < 10)
+                min = "0" + String.valueOf(minute);
+            String time1 = String.valueOf(hour) + ":" + min;
             set_time.setText(time1);
         }
     };
@@ -137,6 +164,17 @@ public class ManualEntryActivity extends AppCompatActivity {
     public void update(String startInput, String stopInput) {
         start = startInput;
         stop = stopInput;
+    }
+
+    //go to add client page
+    public void fromToClientLookup(View v) {
+        try {
+            Intent intent = new Intent(this, ClientLookupActivity.class);
+            intent.putExtra(MainActivity.CLIENT_LOOKUP_ACTIVITY, "");
+            startActivity(intent);
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public void validateTime() {

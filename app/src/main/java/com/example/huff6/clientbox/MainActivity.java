@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     public void goToClientLookup(View v) {
         try {
             Intent intent = new Intent(this, ClientLookupActivity.class);
-            intent.putExtra(CLIENT_LOOKUP_ACTIVITY, "");
+            intent.putExtra(MainActivity.CLIENT_LOOKUP_ACTIVITY, "");
             startActivity(intent);
         } catch(Exception e) {
             System.out.println(e.getMessage());
