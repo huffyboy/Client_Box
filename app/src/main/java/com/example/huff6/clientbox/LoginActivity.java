@@ -12,11 +12,15 @@ public class LoginActivity extends AppCompatActivity {
     EditText username;
     EditText password;
     CheckBox stayLoggedIn;
+    protected ClientBoxApplication app;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        app = (ClientBoxApplication)getApplication();
+
+
     }
 
     public void onLogin(View v) {
@@ -26,8 +30,9 @@ public class LoginActivity extends AppCompatActivity {
         password = (EditText) findViewById(R.id.password);
         stayLoggedIn = (CheckBox) findViewById(R.id.checkBox);
 
-        //check against database here
-
+        //Simply write a test string to the DB - this should be where authentication goes
+        String test = "Testing the DB";
+        app.firebaseDb.push().setValue(test);
         //if not valid display error message here
 
         //it valid connect to database and move on to main page
