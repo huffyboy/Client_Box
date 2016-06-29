@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * Created by Tyler on 6/25/2016.
@@ -23,6 +25,11 @@ public class ClientBoxApplication extends Application {
     //Firebase firebaseDb;
     FirebaseAuth auth;
     FirebaseAuth.AuthStateListener authListener;
+    FirebaseDatabase database;
+
+    DatabaseReference clientRef;
+    DatabaseReference numClientRef;
+
 
     @Override
     public void onCreate() {
@@ -47,6 +54,10 @@ public class ClientBoxApplication extends Application {
                 // ...
             }
         };
+
+        database = FirebaseDatabase.getInstance();
+        numClientRef = database.getReference("numClients");
+        clientRef = database.getReference("Clients");
 
     }
 }

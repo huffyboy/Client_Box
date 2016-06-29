@@ -7,12 +7,17 @@ public class Client {
 
     private String name;
     private String number;
-    private int id;
+    //private int id;
 
     Client () {
         name = "";
         number = "";
-        id = 0;
+        //id = 0;
+    }
+
+    public Client(String name, String number) {
+        this.name = name;
+        this.number = number;
     }
 
     public String getName() {
@@ -23,7 +28,7 @@ public class Client {
         return number;
     }
 
-    public int getId() {
-        return id;
-    }
+    //public int getId() {
+    //    return id;
+    //}
 }
