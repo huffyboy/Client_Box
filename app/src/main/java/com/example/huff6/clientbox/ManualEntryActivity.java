@@ -91,6 +91,12 @@ public class ManualEntryActivity extends AppCompatActivity {
         showDialog(Date_id);
     }
 
+    /**
+     * Submits the manual entry (when button pressed
+     * to a database and the passes an intent back to MainActivity.
+     * It will throw an exception
+     * @param v
+     */
     public void onClickSubmitManualEntry(View v) {
         //submit info to database
 
@@ -160,13 +166,16 @@ public class ManualEntryActivity extends AppCompatActivity {
 //////////////////////////////////
 //
 
-
+    /**update start and stop inputs
+     */
     public void update(String startInput, String stopInput) {
         start = startInput;
         stop = stopInput;
     }
 
-    //go to add client page
+
+    /**go to add client page to select client
+     */
     public void fromToClientLookup(View v) {
         try {
             Intent intent = new Intent(this, ClientLookupActivity.class);
@@ -177,8 +186,11 @@ public class ManualEntryActivity extends AppCompatActivity {
         }
     }
 
+    /**Here we will check start against stop
+     *and make sure that it is correct
+     * throw a toast if the date is off
+     */
     public void validateTime() {
-
     }
 
     public boolean getIsValid() {
