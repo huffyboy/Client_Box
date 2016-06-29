@@ -35,7 +35,12 @@ import android.widget.Chronometer;
         return time;
     }
 
-    public void onClickStartStop(View v){
+     /**
+      * Stops the timer
+      *
+      * @param v the view for XML reference
+      */
+     public void onClickStartStop(View v){
         if (!start) {
             chronometer.setBase(SystemClock.elapsedRealtime()+time);
             chronometer.start();
@@ -49,11 +54,20 @@ import android.widget.Chronometer;
         start = !start;
     }
 
+     /**
+      * Reset the timer
+      *
+      * @param v the view to allow XML reference
+      */
      public void onClickReset(View v){
          chronometer.setBase(SystemClock.elapsedRealtime());
      }
 
-     // move on to manual entry activity
+     /**
+      * Forwards to the ManualActivity
+      *
+      * @param v the view to allow XML reference
+      */
      public void goToManualEntry(View v){
          try {
              Intent intent = new Intent(this, ManualEntryActivity.class);

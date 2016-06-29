@@ -32,7 +32,11 @@ public class MainActivity extends AppCompatActivity {
         updateCallInfo();
     }
 
-    // go to add client page
+    /**
+     * Go to the add client page
+     *
+     * @param v the view for XML reference
+     */
     public void goToAddClient(View v) {
         try {
             Intent intent = new Intent(this, AddClientActivity.class);
@@ -44,7 +48,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //go to add client page
+    /**
+     * Go to Timer activity
+     *
+     * @param v the view for XML reference
+     */
     public void goToTimer(View v) {
         try {
             Intent intent = new Intent(this, TimerActivity.class);
@@ -56,7 +64,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // go to add client page
+    /**
+     * Go to Manual Entry Activity
+     *
+     * @param v the view for the XML reference
+     */
     public void goToManualEntry(View v) {
         try {
             Intent intent = new Intent(this, ManualEntryActivity.class);
@@ -68,7 +80,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //go to add client page
+    /**
+     * Go to Client Lookup Activity
+     *
+     * @param v the view for XML reference
+     */
     public void goToClientLookup(View v) {
         try {
             Intent intent = new Intent(this, ClientLookupActivity.class);
