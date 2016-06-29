@@ -23,6 +23,13 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    /**
+     *
+     * on login allows for the user to request access to the database
+     * and move on to the main activity
+     *
+     * @param v
+     */
     public void onLogin(View v) {
 
 

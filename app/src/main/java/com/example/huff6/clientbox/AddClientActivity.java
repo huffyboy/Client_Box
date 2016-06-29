@@ -18,6 +18,12 @@ public class AddClientActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_client);
     }
 
+    /**
+     * add Client allows for the user to input information
+     * about a new client into a database
+     *
+     * @param v
+     */
     public void addClient(View v) {
         name = (EditText) findViewById(R.id.name);
         phone = (EditText) findViewById(R.id.phone);
@@ -37,11 +43,11 @@ public class AddClientActivity extends AppCompatActivity {
         }
     }
 
-
+//not used
     public void onChangeValidateName()
     {
     }
-
+//not used
     public void onChangeValidateNumber()
     {
     }
