@@ -8,7 +8,7 @@ package com.example.huff6.clientbox;
 public class Log {
     private String startTime;
     private String stopTime;
-    private int duration;
+    private long duration;
     private String notes;
 
     Log () {
@@ -16,6 +16,13 @@ public class Log {
         stopTime  = "";
         duration  = 0;
         notes     = "";
+    }
+
+    public void setLog(String sTime, String eTime, long dur, String inputNotes) {
+        startTime = sTime;
+        stopTime = eTime;
+        duration = dur;
+        notes = inputNotes;
     }
 
     public String getStartTime() {
@@ -26,7 +33,7 @@ public class Log {
         return stopTime;
     }
 
-    public int getDuration() {
+    public long getDuration() {
         return duration;
     }
 

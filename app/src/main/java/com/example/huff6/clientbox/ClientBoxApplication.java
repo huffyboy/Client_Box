@@ -30,6 +30,8 @@ public class ClientBoxApplication extends Application {
     DatabaseReference clientRef;
     DatabaseReference numClientRef;
 
+    DatabaseReference logRef;
+
 
     @Override
     public void onCreate() {
@@ -58,6 +60,6 @@ public class ClientBoxApplication extends Application {
         database = FirebaseDatabase.getInstance();
         numClientRef = database.getReference("numClients");
         clientRef = database.getReference("Clients");
-
+        logRef = database.getReference("client logs");
     }
 }

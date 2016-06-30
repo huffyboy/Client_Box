@@ -26,6 +26,8 @@ public class ManualEntryActivity extends AppCompatActivity {
     boolean isValid;
     LocalConnection localConnection;
 
+    protected ClientBoxApplication app;
+
 //////////////////////////////////
     private static Button date, time;
     private static TextView set_date, set_time;
@@ -36,6 +38,7 @@ public class ManualEntryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manual_entry);
+        app = (ClientBoxApplication)getApplication();
 
         Intent intent = getIntent();
         //either recieve from the main of recieve from the timer
@@ -99,7 +102,17 @@ public class ManualEntryActivity extends AppCompatActivity {
      */
     public void onClickSubmitManualEntry(View v) {
         //submit info to database
+        Log tempLog = new Log();
+        tempLog.setLog("startTime", "endTime", 00, "notes...");
 
+        //Client client = new Client(name, phoneNumber);
+        app.logRef.push().setValue(tempLog);
+            //app.database.setValue("client 00").push(tem);
+        // we may want to increment number of logs per user?
+        //numClients++;
+        //numClientsRef.setValue(numClients);
+
+        /*
         //if added:
         Toast.makeText(ManualEntryActivity.this, "submitted successfully", Toast.LENGTH_SHORT).show();
 
@@ -113,6 +126,7 @@ public class ManualEntryActivity extends AppCompatActivity {
         catch(Exception e){
             System.out.println(e.getMessage());
         }
+        */
     }
 
     protected Dialog onCreateDialog(int id) {
