@@ -19,7 +19,7 @@
         android:layout_marginTop="111dp"
         android:layout_alignRight="@+id/password"
         android:layout_alignEnd="@+id/password"
-        android:hint="email" />
+        android:text="tyleris@gmail.com" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -29,7 +29,8 @@
         android:id="@+id/password"
         android:layout_below="@+id/username"
         android:layout_centerHorizontal="true"
-        android:hint="password" />
+        android:hint="password"
+        android:text="123456" />
 
     <Button
         android:layout_width="wrap_content"
