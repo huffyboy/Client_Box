@@ -28,6 +28,10 @@ public class Client {
         return number;
     }
 
+    public void setNum(String num) {
+        this.number = num;
+    }
+
     //public int getId() {
     //    return id;
     //}

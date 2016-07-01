@@ -58,8 +58,10 @@ public class ClientLookupActivity extends AppCompatActivity {
 
                 // A new client has been added, add it to the displayed list
                 Client theClient = dataSnapshot.getValue(Client.class);
+                theClient.setNum(dataSnapshot.getKey());
                 clientList.add(theClient);
             }
+
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
