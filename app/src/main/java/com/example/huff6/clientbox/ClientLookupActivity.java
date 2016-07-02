@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.*;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
@@ -22,7 +23,9 @@ public class ClientLookupActivity extends AppCompatActivity {
     protected ClientBoxApplication app;
     //Client client;
     List<Client> clientList;
+    List<String> clientString;
     private long numClients;
+    ListView lv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,21 +34,55 @@ public class ClientLookupActivity extends AppCompatActivity {
 
         app = (ClientBoxApplication)getApplication();
         clientList = new ArrayList<>();
+        clientString = new ArrayList<>();
         readFromDatabase();
+
+        populateListView();
+    }
+
+    //this function is to populate the listview with the
+    //database informtion
+    void populateListView(){
+
+
+        lv = (ListView) findViewById(R.id.listView);
+
+        List<String> data = new ArrayList<>();
+        for (Client client : clientList) {
+            data.add("Name   : " + client.getName() + "\n"
+                    + "Number : " + client.getNum());
+        }
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_list_item_1,
+                data );
+
+        lv.setAdapter(arrayAdapter);
     }
 
     public void onClickView(View v) {
+        populateListView();
+        /*
         numClients = clientList.size();
         app.numClientRef.setValue(numClients);
 
         StringBuilder buffer = new StringBuilder();
 
+        String[] clients = new String[clientList.size()];
         buffer.append("Number of Clients: " ).append(numClients).append("\n\n");
         for (Client client : clientList) {
             buffer.append("Name     : " ).append(client.getName()).append("\n");
             buffer.append("Number   : " ).append(client.getNum()).append("\n\n");
+            clientString.add("Name   : " + client.getName() +"\n"
+                           + "Number : " + client.getNum() + "\n");
         }
-        showMessage("Data", buffer.toString());
+        //clients = clientList.toArray(clients);
+
+        ArrayAdapter adapter = new ArrayAdapter<>(this,R.layout.activity_client_lookup,clientString);
+        ListView listView = (ListView) findViewById(R.id.listView);
+        listView.setAdapter(adapter);
+        showMessage("Data", buffer.toString());*/
     }
 
     public void readFromDatabase() {
@@ -146,10 +183,4 @@ public class ClientLookupActivity extends AppCompatActivity {
         builder.show();
     }
 
-
-    //create a public void class that passes the information of the listView
-    //onClick will be executed by the listView so I imagine just pass in 'this'
-    void listViewOnClick(){
-        //adds a client and then returns to main menu?
-    }
 }

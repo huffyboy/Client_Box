@@ -68,6 +68,7 @@
         android:layout_below="@+id/button3"
         android:layout_centerHorizontal="true"
         android:backgroundTint="@android:color/holo_blue_light"
-        android:textSize="18dp" />
+        android:textSize="18dp"
+        android:onClick="synchronize" />
 
 </RelativeLayout>

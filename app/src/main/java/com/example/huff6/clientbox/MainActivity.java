@@ -6,12 +6,15 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.provider.CallLog;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String TIMER_ACTIVITY         = "com.example.huff6.clientbox.TimerActivity";
     public static final String MANUAL_ENTRY_ACTIVITY  = "com.example.huff6.clientbox.ManualEntryActivity";
     public static final String CLIENT_LOOKUP_ACTIVITY = "com.example.huff6.clientbox.ClientLookupActivity";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,5 +143,22 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         managedCursor.close();
+    }
+
+    public void synchronize(View v){
+        ArrayList<String> array = new ArrayList<>();
+        for (Integer i = 0; i < 10; i++){
+            array.add(i.toString());
+        }
+        showMessage("yolo", array.toString());
+    }
+
+    private void showMessage(String title, String Message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(true);
+        builder.setTitle(title);
+        builder.setMessage(Message);
+
+        builder.show();
     }
 }
