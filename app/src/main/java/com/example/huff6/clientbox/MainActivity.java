@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+
 public class MainActivity extends AppCompatActivity {
 
     //We need a thread singleton object here

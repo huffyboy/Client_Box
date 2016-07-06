@@ -7,34 +7,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.huff6.clientbox.ManualEntryActivity">
-
-    <Button
-        android:id="@+id/selectdate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="10dp"
-        android:text="Start Date"
-        android:layout_gravity="center"
-        android:layout_alignTop="@+id/selecttime"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="47dp"
-        android:layout_marginEnd="47dp"
-        android:onClick="startDateSetter" />
-
-    <TextView
-        android:id="@+id/set_date"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="10dp"
-        android:layout_below="@+id/selectdate"
-        android:layout_alignLeft="@+id/selectdate"
-        android:layout_alignStart="@+id/selectdate"
-        android:layout_alignRight="@+id/selectdate"
-        android:layout_alignEnd="@+id/selectdate" />
+    tools:context="com.example.huff6.clientbox.ManualEntryActivity"
+    android:touchscreenBlocksFocus="true">
 
     <Button
         android:id="@+id/selecttime"
@@ -43,13 +17,11 @@
         android:gravity="center"
         android:padding="10dp"
         android:text="Start Time"
-        android:layout_marginLeft="39dp"
-        android:layout_marginStart="39dp"
-        android:layout_marginTop="156dp"
-        android:layout_alignParentTop="true"
+        android:layout_marginTop="73dp"
+        android:onClick="startTimeSetter"
+        android:layout_below="@+id/button3"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:onClick="startTimeSetter" />
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:id="@+id/set_time"
@@ -57,11 +29,8 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="10dp"
-        android:layout_below="@+id/selectdate"
-        android:layout_alignRight="@+id/selecttime"
-        android:layout_alignEnd="@+id/selecttime"
-        android:layout_alignLeft="@+id/selecttime"
-        android:layout_alignStart="@+id/selecttime" />
+        android:layout_alignBottom="@+id/selecttime"
+        android:layout_toRightOf="@+id/selecttime" />
 
     <Button
         android:id="@+id/selectime2"
@@ -71,12 +40,11 @@
         android:padding="10dp"
         android:text="End Time"
         android:layout_gravity="center"
-        android:layout_below="@+id/set_time"
-        android:layout_alignLeft="@+id/set_time"
-        android:layout_alignStart="@+id/set_time"
-        android:layout_alignRight="@+id/set_time"
-        android:layout_alignEnd="@+id/set_time"
-        android:onClick="endTimeSetter" />
+        android:onClick="endTimeSetter"
+        android:layout_below="@+id/selecttime"
+        android:layout_toLeftOf="@+id/set_time"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:id="@+id/set_time2"
@@ -84,46 +52,9 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="10dp"
-        android:layout_below="@+id/selectime2"
-        android:layout_alignLeft="@+id/selectime2"
-        android:layout_alignStart="@+id/selectime2"
-        android:layout_alignRight="@+id/selectime2"
-        android:layout_alignEnd="@+id/selectime2" />
-
-    <Button
-        android:id="@+id/selectdate2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="10dp"
-        android:text="End Date"
-        android:layout_below="@+id/set_date"
-        android:layout_alignRight="@+id/set_date"
-        android:layout_alignEnd="@+id/set_date"
-        android:layout_alignLeft="@+id/set_date"
-        android:layout_alignStart="@+id/set_date"
-        android:onClick="endDateSetter" />
-
-    <TextView
-        android:id="@+id/set_date2"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="10dp"
-        android:layout_below="@+id/selectdate2"
-        android:layout_alignLeft="@+id/selectdate2"
-        android:layout_alignStart="@+id/selectdate2"
-        android:layout_alignRight="@+id/set_date"
-        android:layout_alignEnd="@+id/set_date" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Description"
-        android:id="@+id/textView"
-        android:layout_below="@+id/set_time2"
-        android:layout_alignLeft="@+id/set_time2"
-        android:layout_alignStart="@+id/set_time2" />
+        android:layout_alignBottom="@+id/selectime2"
+        android:layout_toRightOf="@+id/selectime2"
+        android:layout_toEndOf="@+id/selectime2" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -131,11 +62,12 @@
         android:inputType="textMultiLine"
         android:ems="10"
         android:id="@+id/editText3"
-        android:layout_below="@+id/textView"
-        android:layout_alignLeft="@+id/textView"
-        android:layout_alignStart="@+id/textView"
-        android:layout_alignRight="@+id/set_date2"
-        android:layout_alignEnd="@+id/set_date2" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/button3"
+        android:layout_alignEnd="@+id/button3"
+        android:hint="Enter description here..."
+        android:layout_below="@+id/selectime2" />
 
     <Button
         android:layout_width="wrap_content"
@@ -145,21 +77,37 @@
         android:layout_below="@+id/editText3"
         android:layout_alignLeft="@+id/editText3"
         android:layout_alignStart="@+id/editText3"
-        android:layout_alignRight="@+id/set_date2"
-        android:layout_alignEnd="@+id/set_date2"
-        android:onClick="onClickSubmitManualEntry" />
+        android:onClick="onClickSubmitManualEntry"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Lookup Client"
         android:id="@+id/button3"
-        android:layout_above="@+id/selectdate"
-        android:layout_alignLeft="@+id/selecttime"
-        android:layout_alignStart="@+id/selecttime"
-        android:layout_marginBottom="38dp"
-        android:layout_alignRight="@+id/selectdate"
-        android:layout_alignEnd="@+id/selectdate"
-        android:onClick="fromToClientLookup" />
+        android:onClick="fromToClientLookup"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Select client"
+        android:id="@+id/textView"
+        android:layout_below="@+id/button3"
+        android:layout_above="@+id/set_time"
+        android:layout_alignRight="@+id/button3"
+        android:layout_alignEnd="@+id/button3"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:onClick="showClients"
+        android:clickable="true"
+        android:contextClickable="true"
+        android:textAlignment="center" />
 
 </RelativeLayout>

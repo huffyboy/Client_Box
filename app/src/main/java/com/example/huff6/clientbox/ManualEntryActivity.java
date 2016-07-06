@@ -1,20 +1,31 @@
 package com.example.huff6.clientbox;
 
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 
 public class ManualEntryActivity extends AppCompatActivity {
@@ -25,6 +36,11 @@ public class ManualEntryActivity extends AppCompatActivity {
     Client client;
     boolean isValid;
     LocalConnection localConnection;
+    //Client client;
+    List<Client> clientList;
+    List<String> clientString;
+
+    ListView modeList;
 
     protected ClientBoxApplication app;
 
@@ -46,53 +62,34 @@ public class ManualEntryActivity extends AppCompatActivity {
         String message = intent.getStringExtra(MainActivity.MANUAL_ENTRY_ACTIVITY);
 
 
-        date = (Button) findViewById(R.id.selectdate);
+
         time = (Button) findViewById(R.id.selecttime);
-        set_date = (TextView) findViewById(R.id.set_date);
         set_time = (TextView) findViewById(R.id.set_time);
-       // date.setOnClickListener(new OnClickListener() {
 
-         //   @Override
-           // public void onClick(View arg0) {
 
-                // Show Date dialog
-             //   showDialog(Date_id);
-            ///}
-        //});
-        //time.setOnClickListener(new OnClickListener() {
+        clientList = new ArrayList<>();
+        clientString = new ArrayList<>();
+        readFromDatabase();
 
-          //  @Override
-            //public void onClick(View arg0) {
-
-                // Show time dialog
-              //  showDialog(Time_id);
-            //}
-        //});
     }
 
     public void startTimeSetter(View v) {
         // Show time dialog
+        set_time = (TextView) findViewById(R.id.set_time);
         showDialog(Time_id);
+        //set_date = (TextView) findViewById(R.id.set_date);
+        showDialog(Date_id);
     }
 
     public void endTimeSetter(View v) {
         // Show time dialog
         set_time = (TextView) findViewById(R.id.set_time2);
         showDialog(Time_id);
-    }
-
-
-    public void startDateSetter(View v) {
-        // Show date dialog
+        //set_date = (TextView) findViewById(R.id.set_date2);
         showDialog(Date_id);
     }
 
 
-    public void endDateSetter(View v) {
-        // Show date dialog
-        set_date = (TextView) findViewById(R.id.set_date2);
-        showDialog(Date_id);
-    }
 
     /**
      * Submits the manual entry (when button pressed
@@ -161,7 +158,7 @@ public class ManualEntryActivity extends AppCompatActivity {
             // store the data in one string and set it to text
             String date1 = String.valueOf(month + 1) + "/" + String.valueOf(day)
                     + "/" + String.valueOf(year);
-            set_date.setText(date1);
+            set_time.setText(set_time.getText().toString()+ date1);
         }
     };
     TimePickerDialog.OnTimeSetListener time_listener = new TimePickerDialog.OnTimeSetListener() {
@@ -173,7 +170,7 @@ public class ManualEntryActivity extends AppCompatActivity {
             if (minute < 10)
                 min = "0" + String.valueOf(minute);
             String time1 = String.valueOf(hour) + ":" + min;
-            set_time.setText(time1);
+            set_time.setText(set_time.getText().toString() + " @ " + time1);
         }
     };
 
@@ -190,14 +187,32 @@ public class ManualEntryActivity extends AppCompatActivity {
 
     /**go to add client page to select client
      */
+    public void showClients(View v) {
+//http://stackoverflow.com/questions/2874191/is-it-possible-to-create-listview-inside-dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select Client");
+
+        populateListView();
+        //String[] stringArray = new String[]{"Bright Mode", "Normal Mode"};
+        //ArrayAdapter<String> modeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, stringArray);
+        //modeList.setAdapter(modeAdapter);
+
+        builder.setView(modeList);
+        final Dialog dialog = builder.create();
+
+        dialog.show();
+    }
+
     public void fromToClientLookup(View v) {
-        try {
+
+        populateListView();
+       /* try {
             Intent intent = new Intent(this, ClientLookupActivity.class);
             intent.putExtra(MainActivity.CLIENT_LOOKUP_ACTIVITY, "");
             startActivity(intent);
         } catch(Exception e) {
             System.out.println(e.getMessage());
-        }
+        }*/
     }
 
     /**Here we will check start against stop
@@ -209,5 +224,106 @@ public class ManualEntryActivity extends AppCompatActivity {
 
     public boolean getIsValid() {
         return isValid;
+    }
+
+
+
+    public void readFromDatabase() {
+        // Read from the database
+
+        ChildEventListener childEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                android.util.Log.d(ClientLookupActivity.TAG, "onChildAdded:" + dataSnapshot.getKey());
+
+                // A new client has been added, add it to the displayed list
+                Client theClient = dataSnapshot.getValue(Client.class);
+                theClient.setNum(dataSnapshot.getKey());
+                clientList.add(theClient);
+            }
+
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                android.util.Log.d(ClientLookupActivity.TAG, "onChildChanged:" + dataSnapshot.getKey());
+
+                // A client has changed, use the key to determine if we are displaying this
+                // client and if so displayed the changed comment.
+                Client newClient = dataSnapshot.getValue(Client.class);
+                String clientKey = dataSnapshot.getKey();
+
+                // ... ??
+                //clientList.set(Integer.parseInt(clientKey), newClient);
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                android.util.Log.d(ClientLookupActivity.TAG, "onChildRemoved:" + dataSnapshot.getKey());
+
+                // A client has changed, use the key to determine if we are displaying this
+                // client and if so remove it.
+                String clientKey = dataSnapshot.getKey();
+
+                // ... ??
+                //clientList.remove(Integer.parseInt(clientKey));
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                android.util.Log.d(ClientLookupActivity.TAG, "onChildMoved:" + dataSnapshot.getKey());
+
+                // A client has changed position, use the key to determine if we are
+                // displaying this client and if so move it.
+                //      Client movedClient = dataSnapshot.getValue(Client.class);
+                //      String clientKey = dataSnapshot.getKey();
+
+                // ...
+                // ???
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //Log.w(TAG, "postComments:onCancelled", databaseError.toException());
+                Toast.makeText(ManualEntryActivity.this, "Failed to load comments.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        };
+        app.clientRef.addChildEventListener(childEventListener);
+
+
+        // TO READ THE NUMBER OF ITEMS      !!!!!!!!!!!
+
+        ValueEventListener numListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //numClients = dataSnapshot.getValue(Long.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                android.util.Log.w(ClientLookupActivity.TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        };
+        app.numClientRef.addValueEventListener(numListener);
+    }
+
+    void populateListView(){
+
+
+        modeList = new ListView(this);
+
+        List<String> data = new ArrayList<>();
+        for (Client client : clientList) {
+            data.add("Name   : " + client.getName() + "\n"
+                    + "Number : " + client.getNum());
+        }
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_list_item_1,
+                data );
+
+        modeList.setAdapter(arrayAdapter);
     }
 }

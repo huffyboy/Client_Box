@@ -40,6 +40,8 @@ public class ClientLookupActivity extends AppCompatActivity {
         populateListView();
     }
 
+
+
     //this function is to populate the listview with the
     //database informtion
     void populateListView(){
@@ -164,7 +166,6 @@ public class ClientLookupActivity extends AppCompatActivity {
         };
         app.numClientRef.addValueEventListener(numListener);
     }
-
 
 
 
