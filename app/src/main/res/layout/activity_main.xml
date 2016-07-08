@@ -45,7 +45,8 @@
         android:layout_centerHorizontal="true"
         android:backgroundTint="@android:color/holo_blue_light"
         android:textSize="18dp"
-        android:onClick="goToClientLookup" />
+        android:onClick="goToClientLookup"
+        android:visibility="invisible" />
 
     <Button
         android:layout_width="300dp"

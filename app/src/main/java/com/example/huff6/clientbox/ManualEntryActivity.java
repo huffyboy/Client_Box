@@ -6,6 +6,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -35,8 +36,12 @@ import com.google.firebase.database.ValueEventListener;
 
 public class ManualEntryActivity extends AppCompatActivity {
 
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy kk:mm");
+
     String start;
     String stop;
+    String date1;
+    String time1;
     String notes;
     Client client;
     boolean isValid;
@@ -178,9 +183,9 @@ public class ManualEntryActivity extends AppCompatActivity {
         @Override
         public void onDateSet(DatePicker view, int year, int month, int day) {
             // store the data in one string and set it to text
-            String date1 = String.valueOf(month + 1) + "/" + String.valueOf(day)
+            date1 = String.valueOf(month + 1) + "/" + String.valueOf(day)
                     + "/" + String.valueOf(year);
-            set_time.setText(set_time.getText().toString()+ date1);
+            set_time.setText(date1);
         }
     };
     TimePickerDialog.OnTimeSetListener time_listener = new TimePickerDialog.OnTimeSetListener() {
@@ -191,8 +196,8 @@ public class ManualEntryActivity extends AppCompatActivity {
             String min = String.valueOf(minute);
             if (minute < 10)
                 min = "0" + String.valueOf(minute);
-            String time1 = String.valueOf(hour) + ":" + min;
-            set_time.setText(set_time.getText().toString() + " @ " + time1);
+            time1 = String.valueOf(hour) + ":" + min;
+            set_time.setText(date1 + " " + time1);
         }
     };
 
