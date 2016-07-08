@@ -1,5 +1,6 @@
 package com.example.huff6.clientbox;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -12,11 +13,15 @@ import java.util.List;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -40,7 +45,13 @@ public class ManualEntryActivity extends AppCompatActivity {
     List<Client> clientList;
     List<String> clientString;
 
+    TextView textView;
+
+    //database variables
     ListView modeList;
+    ListView items;
+    String clientReference;
+    String description;
 
     protected ClientBoxApplication app;
 
@@ -66,6 +77,10 @@ public class ManualEntryActivity extends AppCompatActivity {
         time = (Button) findViewById(R.id.selecttime);
         set_time = (TextView) findViewById(R.id.set_time);
 
+        //set database vars
+        textView = (TextView) findViewById(R.id.textView);
+        EditText et = (EditText) findViewById(R.id.editText3);
+        description = et.getText().toString();
 
         clientList = new ArrayList<>();
         clientString = new ArrayList<>();
@@ -99,11 +114,18 @@ public class ManualEntryActivity extends AppCompatActivity {
      */
     public void onClickSubmitManualEntry(View v) {
         //submit info to database
+
+
+        EditText et = (EditText) findViewById(R.id.editText3);
+        description = et.getText().toString();
+
+
         Log tempLog = new Log();
-        tempLog.setLog("startTime", "endTime", 00, "notes...");
+        tempLog.setLog("startTime", "endTime", 00, description);
 
         //Client client = new Client(name, phoneNumber);
-        app.logRef.push().setValue(tempLog);
+        app.clientRef.child(clientReference).child("Logs").push().setValue(tempLog);
+
             //app.database.setValue("client 00").push(tem);
         // we may want to increment number of logs per user?
         //numClients++;
@@ -201,24 +223,33 @@ public class ManualEntryActivity extends AppCompatActivity {
         final Dialog dialog = builder.create();
 
         dialog.show();
+
+        // onclick listener for the listview that has been created
+        modeList.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?>adapter,View v, int position,long l){
+
+                //set textView
+                String text = (String) (modeList.getItemAtPosition(position));
+                textView.setText(text);
+
+                //close dialog
+                dialog.cancel();
+                clientReference = (String) (items.getItemAtPosition(position));
+            }
+
+
+        });
+
     }
+
+
 
     public void fromToClientLookup(View v) {
 
         populateListView();
-       /* try {
-            Intent intent = new Intent(this, ClientLookupActivity.class);
-            intent.putExtra(MainActivity.CLIENT_LOOKUP_ACTIVITY, "");
-            startActivity(intent);
-        } catch(Exception e) {
-            System.out.println(e.getMessage());
-        }*/
-    }
 
-    /**Here we will check start against stop
-     *and make sure that it is correct
-     * throw a toast if the date is off
-     */
+    }
     public void validateTime() {
     }
 
@@ -312,11 +343,16 @@ public class ManualEntryActivity extends AppCompatActivity {
 
 
         modeList = new ListView(this);
+        items = new ListView(this);
+
 
         List<String> data = new ArrayList<>();
+        List<String> dataOther = new ArrayList<>();
         for (Client client : clientList) {
-            data.add("Name   : " + client.getName() + "\n"
-                    + "Number : " + client.getNum());
+            data.add(client.getName() + "\n"
+                    + client.getNum());
+
+            dataOther.add(client.getNum());
         }
 
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
@@ -325,5 +361,18 @@ public class ManualEntryActivity extends AppCompatActivity {
                 data );
 
         modeList.setAdapter(arrayAdapter);
+
+        arrayAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_list_item_1,
+                dataOther );
+
+        items.setAdapter(arrayAdapter);
+
+
+
+
     }
+
+
 }
