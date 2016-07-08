@@ -6,9 +6,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import android.app.DatePickerDialog;
@@ -36,8 +39,9 @@ import com.google.firebase.database.ValueEventListener;
 
 public class ManualEntryActivity extends AppCompatActivity {
 
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy kk:mm");
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyykk:mm");
 
+    boolean startId = true;
     String start;
     String stop;
     String date1;
@@ -122,18 +126,42 @@ public class ManualEntryActivity extends AppCompatActivity {
      */
     public void onClickSubmitManualEntry(View v) {
         //submit info to database
+
+        try {
+            EditText et = (EditText) findViewById(R.id.editText3);
+            description = et.getText().toString();
         if (check) {
 
             EditText et = (EditText) findViewById(R.id.editText3);
             description = et.getText().toString();
 
+            //calc different between two dates
+            //http://www.javamadesoeasy.com/2015/07/difference-between-two-dates-in-days.html
+            Date startCal;
+            Date stopCal;
 
-            Log tempLog = new Log();
-            tempLog.setLog("startTime", "endTime", 00, description);
 
-            //Client client = new Client(name, phoneNumber);
-            app.clientRef.child(clientReference).child("Logs").push().setValue(tempLog);
+            startCal = dateFormat.parse(start);
+            stopCal = dateFormat.parse(stop);
+            GregorianCalendar calendar1 = new GregorianCalendar();
+            GregorianCalendar calendar2 = new GregorianCalendar();
 
+            calendar1.setTime(startCal);
+            calendar2.setTime(stopCal);
+
+
+        long duration = Math.abs((calendar2.getTimeInMillis() - calendar1.getTimeInMillis() / 1000));
+
+        Log tempLog = new Log();
+        tempLog.setLog(start, stop, (int)duration, description);
+
+        //Client client = new Client(name, phoneNumber);
+        app.clientRef.child(clientReference).child("Logs").push().setValue(tempLog);
+        }
+        catch (ParseException ex){
+            //catching on
+            System.out.println("Parse error");
+        }
             //app.database.setValue("client 00").push(tem);
             // we may want to increment number of logs per user?
             //numClients++;
@@ -202,6 +230,14 @@ public class ManualEntryActivity extends AppCompatActivity {
             if (minute < 10)
                 min = "0" + String.valueOf(minute);
             time1 = String.valueOf(hour) + ":" + min;
+
+            //set the start or stop string accordingly
+            if (startId) {
+                start = date1 + time1;
+                startId = false;
+            } else {
+                stop = date1 + time1;
+            }
             set_time.setText(date1 + " " + time1);
         }
     };
@@ -220,7 +256,6 @@ public class ManualEntryActivity extends AppCompatActivity {
     /**go to add client page to select client
      */
     public void showClients(View v) {
-
 //http://stackoverflow.com/questions/2874191/is-it-possible-to-create-listview-inside-dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Select Client");
@@ -247,8 +282,6 @@ public class ManualEntryActivity extends AppCompatActivity {
                 //close dialog
                 dialog.cancel();
                 clientReference = (String) (items.getItemAtPosition(position));
-
-                check = true;
             }
 
 
