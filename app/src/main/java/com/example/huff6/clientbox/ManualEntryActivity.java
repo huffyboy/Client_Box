@@ -45,6 +45,7 @@ public class ManualEntryActivity extends AppCompatActivity {
     String notes;
     Client client;
     boolean isValid;
+    boolean check;
     LocalConnection localConnection;
     //Client client;
     List<Client> clientList;
@@ -71,6 +72,8 @@ public class ManualEntryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manual_entry);
         app = (ClientBoxApplication)getApplication();
+
+        check = false;
 
         Intent intent = getIntent();
         //either recieve from the main of recieve from the timer
@@ -119,38 +122,40 @@ public class ManualEntryActivity extends AppCompatActivity {
      */
     public void onClickSubmitManualEntry(View v) {
         //submit info to database
+        if (check) {
+
+            EditText et = (EditText) findViewById(R.id.editText3);
+            description = et.getText().toString();
 
 
-        EditText et = (EditText) findViewById(R.id.editText3);
-        description = et.getText().toString();
+            Log tempLog = new Log();
+            tempLog.setLog("startTime", "endTime", 00, description);
 
-
-        Log tempLog = new Log();
-        tempLog.setLog("startTime", "endTime", 00, description);
-
-        //Client client = new Client(name, phoneNumber);
-        app.clientRef.child(clientReference).child("Logs").push().setValue(tempLog);
+            //Client client = new Client(name, phoneNumber);
+            app.clientRef.child(clientReference).child("Logs").push().setValue(tempLog);
 
             //app.database.setValue("client 00").push(tem);
-        // we may want to increment number of logs per user?
-        //numClients++;
-        //numClientsRef.setValue(numClients);
+            // we may want to increment number of logs per user?
+            //numClients++;
+            //numClientsRef.setValue(numClients);
 
-        /*
-        //if added:
-        Toast.makeText(ManualEntryActivity.this, "submitted successfully", Toast.LENGTH_SHORT).show();
 
-        //go back to main page
-        try {
-            // move on to the main page
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra(MainActivity.MAIN_ACTIVITY, "");
-            startActivity(intent);
+            //if added:
+            Toast.makeText(ManualEntryActivity.this, "submitted successfully", Toast.LENGTH_SHORT).show();
+
+            //go back to main page
+            try {
+                // move on to the main page
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.putExtra(MainActivity.MAIN_ACTIVITY, "");
+                startActivity(intent);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
         }
-        catch(Exception e){
-            System.out.println(e.getMessage());
+        else{
+            Toast.makeText(ManualEntryActivity.this, "please select a client", Toast.LENGTH_SHORT).show();
         }
-        */
     }
 
     protected Dialog onCreateDialog(int id) {
@@ -215,6 +220,7 @@ public class ManualEntryActivity extends AppCompatActivity {
     /**go to add client page to select client
      */
     public void showClients(View v) {
+
 //http://stackoverflow.com/questions/2874191/is-it-possible-to-create-listview-inside-dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Select Client");
@@ -241,6 +247,8 @@ public class ManualEntryActivity extends AppCompatActivity {
                 //close dialog
                 dialog.cancel();
                 clientReference = (String) (items.getItemAtPosition(position));
+
+                check = true;
             }
 
 
