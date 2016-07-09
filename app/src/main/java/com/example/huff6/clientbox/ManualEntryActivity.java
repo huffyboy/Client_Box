@@ -1,29 +1,15 @@
 package com.example.huff6.clientbox;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.view.Gravity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -34,71 +20,50 @@ import android.widget.Toast;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Locale;
 
 
 public class ManualEntryActivity extends AppCompatActivity {
 
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyykk:mm");
-
-    boolean startId = true;
-    String start;
-    String stop;
-    String date1;
-    String time1;
-    String notes;
-    Client client;
-    boolean isValid;
-    boolean check;
-    LocalConnection localConnection;
-    //Client client;
+    SimpleDateFormat dateFormat;
+    String start, stop, date1, time1, clientReference, description;
+    boolean startId, isValid, check;
     List<Client> clientList;
     List<String> clientString;
-
     TextView textView;
-
-    //database variables
-    ListView modeList;
-    ListView items;
-    String clientReference;
-    String description;
-
+    ListView modeList, items;
     protected ClientBoxApplication app;
-
-//////////////////////////////////
-    private static Button date, time;
-    private static TextView set_date, set_time;
+    private static TextView set_time;
     private static final int Date_id = 0;
     private static final int Time_id = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manual_entry);
         app = (ClientBoxApplication)getApplication();
-
         check = false;
-
-        Intent intent = getIntent();
-        //either recieve from the main of recieve from the timer
-        //we need to figure out how to switch between different intents
-        String message = intent.getStringExtra(MainActivity.MANUAL_ENTRY_ACTIVITY);
-
-
-
-        time = (Button) findViewById(R.id.selecttime);
+        startId = true;
+        dateFormat = new SimpleDateFormat("dd/mm/yyyykk:mm", Locale.US);
         set_time = (TextView) findViewById(R.id.set_time);
-
-        //set database vars
         textView = (TextView) findViewById(R.id.textView);
         EditText et = (EditText) findViewById(R.id.editText3);
+        assert et != null;
         description = et.getText().toString();
-
         clientList = new ArrayList<>();
         clientString = new ArrayList<>();
         readFromDatabase();
-
     }
+
 
     public void startTimeSetter(View v) {
         // Show time dialog
@@ -107,6 +72,7 @@ public class ManualEntryActivity extends AppCompatActivity {
         //set_date = (TextView) findViewById(R.id.set_date);
         showDialog(Date_id);
     }
+
 
     public void endTimeSetter(View v) {
         // Show time dialog
@@ -117,59 +83,44 @@ public class ManualEntryActivity extends AppCompatActivity {
     }
 
 
-
     /**
      * Submits the manual entry (when button pressed
      * to a database and the passes an intent back to MainActivity.
      * It will throw an exception
-     * @param v
+     * @param v the view for xml access
      */
     public void onClickSubmitManualEntry(View v) {
         //submit info to database
-
         if (check) {
             try {
                 EditText et = (EditText) findViewById(R.id.editText3);
+                assert et != null;
                 description = et.getText().toString();
-
 
                 //calc different between two dates
                 //http://www.javamadesoeasy.com/2015/07/difference-between-two-dates-in-days.html
-                Date startCal;
-                Date stopCal;
-
-
+                Date startCal, stopCal;
                 startCal = dateFormat.parse(start);
                 stopCal = dateFormat.parse(stop);
                 GregorianCalendar calendar1 = new GregorianCalendar();
                 GregorianCalendar calendar2 = new GregorianCalendar();
-
                 calendar1.setTime(startCal);
                 calendar2.setTime(stopCal);
 
-
                 long duration = Math.abs((calendar2.getTimeInMillis() - calendar1.getTimeInMillis() / 1000));
-
                 Log tempLog = new Log();
                 tempLog.setLog(start, stop, (int)duration, description);
-
-                //Client client = new Client(name, phoneNumber);
                 app.clientRef.child(clientReference).child("Logs").push().setValue(tempLog);
             }
             catch (ParseException ex){
                 //catching on
                 System.out.println("Parse error");
             }
-            //app.database.setValue("client 00").push(tem);
-            // we may want to increment number of logs per user?
-            //numClients++;
-            //numClientsRef.setValue(numClients);
 
-
-            //if added:
+            // if added:
             Toast.makeText(ManualEntryActivity.this, "submitted successfully", Toast.LENGTH_SHORT).show();
 
-            //go back to main page
+            // go back to main page
             try {
                 // move on to the main page
                 Intent intent = new Intent(this, MainActivity.class);
@@ -178,14 +129,13 @@ public class ManualEntryActivity extends AppCompatActivity {
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
-        }
-        else{
+        } else {
             Toast.makeText(ManualEntryActivity.this, "please select a client", Toast.LENGTH_SHORT).show();
         }
     }
 
-    protected Dialog onCreateDialog(int id) {
 
+    protected Dialog onCreateDialog(int id) {
         // Get the calander
         Calendar c = Calendar.getInstance();
 
@@ -208,6 +158,7 @@ public class ManualEntryActivity extends AppCompatActivity {
         return null;
     }
 
+
     // Date picker dialog
     DatePickerDialog.OnDateSetListener date_listener = new DatePickerDialog.OnDateSetListener() {
 
@@ -219,6 +170,8 @@ public class ManualEntryActivity extends AppCompatActivity {
             set_time.setText(date1);
         }
     };
+
+
     TimePickerDialog.OnTimeSetListener time_listener = new TimePickerDialog.OnTimeSetListener() {
 
         @Override
@@ -229,21 +182,21 @@ public class ManualEntryActivity extends AppCompatActivity {
                 min = "0" + String.valueOf(minute);
             time1 = String.valueOf(hour) + ":" + min;
 
-            //set the start or stop string accordingly
+            // set the start or stop string accordingly
             if (startId) {
                 start = date1 + time1;
                 startId = false;
             } else {
                 stop = date1 + time1;
             }
-            set_time.setText(date1 + " " + time1);
+            String dateAndTime = date1 + " " + time1;
+            set_time.setText(dateAndTime);
         }
     };
 
-//////////////////////////////////
-//
 
-    /**update start and stop inputs
+    /**
+     * update start and stop inputs
      */
     public void update(String startInput, String stopInput) {
         start = startInput;
@@ -251,13 +204,13 @@ public class ManualEntryActivity extends AppCompatActivity {
     }
 
 
-    /**go to add client page to select client
+    /**
+     * go to add client page to select client
      */
     public void showClients(View v) {
-//http://stackoverflow.com/questions/2874191/is-it-possible-to-create-listview-inside-dialog
+        //http://stackoverflow.com/questions/2874191/is-it-possible-to-create-listview-inside-dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Select Client");
-
         populateListView();
         //String[] stringArray = new String[]{"Bright Mode", "Normal Mode"};
         //ArrayAdapter<String> modeAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, stringArray);
@@ -265,49 +218,41 @@ public class ManualEntryActivity extends AppCompatActivity {
 
         builder.setView(modeList);
         final Dialog dialog = builder.create();
-
         dialog.show();
 
         // onclick listener for the listview that has been created
         modeList.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?>adapter,View v, int position,long l){
-
-                //set textView
+                // set textView
                 String text = (String) (modeList.getItemAtPosition(position));
                 textView.setText(text);
 
-                //close dialog
+                // close dialog
                 dialog.cancel();
                 clientReference = (String) (items.getItemAtPosition(position));
-
                 check = true;
             }
-
-
         });
-
     }
 
 
-
-    public void fromToClientLookup(View v) {
-
+    /*public void fromToClientLookup(View v) {
         populateListView();
+    }*/
 
-    }
+
     public void validateTime() {
     }
+
 
     public boolean getIsValid() {
         return isValid;
     }
 
 
-
+    // Read from the database
     public void readFromDatabase() {
-        // Read from the database
-
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
@@ -319,85 +264,56 @@ public class ManualEntryActivity extends AppCompatActivity {
                 clientList.add(theClient);
             }
 
-
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 android.util.Log.d(ClientLookupActivity.TAG, "onChildChanged:" + dataSnapshot.getKey());
-
                 // A client has changed, use the key to determine if we are displaying this
                 // client and if so displayed the changed comment.
-                Client newClient = dataSnapshot.getValue(Client.class);
-                String clientKey = dataSnapshot.getKey();
+                //      Client newClient = dataSnapshot.getValue(Client.class);
+                //      String clientKey = dataSnapshot.getKey();
 
-                // ... ??
-                //clientList.set(Integer.parseInt(clientKey), newClient);
-
+                // Don't need this right now
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 android.util.Log.d(ClientLookupActivity.TAG, "onChildRemoved:" + dataSnapshot.getKey());
-
                 // A client has changed, use the key to determine if we are displaying this
                 // client and if so remove it.
-                String clientKey = dataSnapshot.getKey();
+                //      String clientKey = dataSnapshot.getKey();
 
-                // ... ??
-                //clientList.remove(Integer.parseInt(clientKey));
+                // Don't need this right now
             }
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
                 android.util.Log.d(ClientLookupActivity.TAG, "onChildMoved:" + dataSnapshot.getKey());
-
                 // A client has changed position, use the key to determine if we are
                 // displaying this client and if so move it.
                 //      Client movedClient = dataSnapshot.getValue(Client.class);
                 //      String clientKey = dataSnapshot.getKey();
 
-                // ...
-                // ???
+                // Don't need this right now
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                //Log.w(TAG, "postComments:onCancelled", databaseError.toException());
                 Toast.makeText(ManualEntryActivity.this, "Failed to load comments.",
                         Toast.LENGTH_SHORT).show();
             }
         };
         app.clientRef.addChildEventListener(childEventListener);
-
-
-        // TO READ THE NUMBER OF ITEMS      !!!!!!!!!!!
-
-        ValueEventListener numListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                //numClients = dataSnapshot.getValue(Long.class);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                android.util.Log.w(ClientLookupActivity.TAG, "loadPost:onCancelled", databaseError.toException());
-            }
-        };
-        app.numClientRef.addValueEventListener(numListener);
     }
 
+
     void populateListView(){
-
-
         modeList = new ListView(this);
         items = new ListView(this);
-
-
         List<String> data = new ArrayList<>();
         List<String> dataOther = new ArrayList<>();
         for (Client client : clientList) {
             data.add(client.getName() + "\n"
                     + client.getNum());
-
             dataOther.add(client.getNum());
         }
 
@@ -405,20 +321,12 @@ public class ManualEntryActivity extends AppCompatActivity {
                 this,
                 android.R.layout.simple_list_item_1,
                 data );
-
         modeList.setAdapter(arrayAdapter);
 
         arrayAdapter = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_list_item_1,
                 dataOther );
-
         items.setAdapter(arrayAdapter);
-
-
-
-
     }
-
-
 }

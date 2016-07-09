@@ -6,9 +6,9 @@ import android.database.Cursor;
 /**
  * Created by huff6 on 6/18/2016
  */
-
 public class LocalSingleton {
     DatabaseHelper myDb;
+
 
     LocalSingleton(Context context) {
         myDb = new DatabaseHelper(context);

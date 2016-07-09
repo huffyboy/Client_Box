@@ -15,25 +15,25 @@ import android.widget.Chronometer;
      long time = 0;
      Boolean start = false;
 
+
      @Override
      protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timer);
-
-        Intent intent = getIntent();
-        String message = intent.getStringExtra(MainActivity.TIMER_ACTIVITY);
-
+        //      Intent intent = getIntent();
+        //      String message = intent.getStringExtra(MainActivity.TIMER_ACTIVITY);
         chronometer = (Chronometer) findViewById(R.id.chronometer);
         startStop = (Button) findViewById(R.id.btn_toggle_start_stop);
+     }
 
-    }
+     void onClickManualEntry(){
+        // go to manual entry
+        time -= 30;
+     }
 
-    void onClickManualEntry(){
-        time -= 30;//go to manual entry
-    }
-    long getTime(){
+     long getTime(){
         return time;
-    }
+     }
 
      /**
       * Stops the timer

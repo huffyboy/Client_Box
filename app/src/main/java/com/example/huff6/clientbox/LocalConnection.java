@@ -14,27 +14,33 @@ public class LocalConnection {
     Queue<Integer> ids;
     ServerConnection serverConnection;
 
+
     LocalConnection() {
         logs = new ArrayDeque<Log>();
         ids = new ArrayDeque<Integer>();
         serverConnection = new ServerConnection();
     }
 
+
     public void updateQueue(){
 
     }
+
 
     public void syncDatabase(){
 
     }
 
+
     public Queue<Log> getLogs() {
         return logs;
     }
 
+
     public Queue<Integer> getIds() {
         return ids;
     }
+
 
     public ServerConnection getServerConnection(){
         return serverConnection;

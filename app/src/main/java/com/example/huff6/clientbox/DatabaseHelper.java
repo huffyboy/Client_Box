@@ -24,6 +24,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, 1);
     }
 
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -31,11 +32,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //db.execSQL("CREATE TABLE log_table (id INTEGER PRIMARY KEY, name TEXT, phone TEXT);");
     }
 
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
+
 
     public boolean insertData(String name,    String number,   String startTime,
                               String endTime, String duration, String notes) {
@@ -52,6 +55,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
+
     public Cursor getAllData() {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.rawQuery("select * from " + TABLE_NAME, null);
@@ -64,10 +68,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
     */
 
+
     public void deleteAllData() {
         SQLiteDatabase db = this.getWritableDatabase();
         //db.execSQL("delete from " + TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
+
 }

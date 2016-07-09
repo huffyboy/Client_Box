@@ -16,23 +16,18 @@ public class ServerConnection {
     }
 
     public String retreiveClient(String id){
-        return "";
+        return username + number;
     }
 
     public void writeClient(String id){
-
     }
 
     public ArrayList<String> retrieveLog(String id){
-        ArrayList<String> temp = new ArrayList<String>();
-
-        return temp;
+        return new ArrayList<>();
     }
 
     public ArrayList<String> retrieveClient(){
-        ArrayList<String> temp = new ArrayList<String>();
-
-        return temp;
+        return new ArrayList<>();
     }
 
     public boolean haveInternetConnection(){

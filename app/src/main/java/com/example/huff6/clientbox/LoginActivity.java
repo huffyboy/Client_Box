@@ -1,12 +1,10 @@
 package com.example.huff6.clientbox;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.*;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -23,6 +21,7 @@ public class LoginActivity extends AppCompatActivity {
     EditText editPassword;
     protected ClientBoxApplication app;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,17 +32,20 @@ public class LoginActivity extends AppCompatActivity {
         editPassword = (EditText) findViewById(R.id.password);
     }
 
+
     @Override
     public void onStart() {
         super.onStart();
         app.auth.addAuthStateListener(app.authListener);
     }
 
+
     @Override
     public void onStop() {
         super.onStop();
         app.auth.removeAuthStateListener(app.authListener);
     }
+
 
     /**
      *
@@ -77,15 +79,11 @@ public class LoginActivity extends AppCompatActivity {
                             android.util.Log.w(TAG, "signInWithEmail", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                        }
-
-                        // ...
-                        else {
+                        } else {
                             Toast.makeText(LoginActivity.this, "Authentication SUCCESS.",
                                     Toast.LENGTH_SHORT).show();
 
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            //intent.putExtra("EXTRA_MESSAGE", "This is the message");
                             startActivity(intent);
                         }
                     }

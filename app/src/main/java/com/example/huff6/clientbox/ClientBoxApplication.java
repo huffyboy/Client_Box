@@ -29,7 +29,6 @@ public class ClientBoxApplication extends Application {
 
     DatabaseReference clientRef;
     DatabaseReference numClientRef;
-
     DatabaseReference logRef;
 
 
@@ -53,7 +52,6 @@ public class ClientBoxApplication extends Application {
                     // User is signed out
                     android.util.Log.d(TAG, "onAuthStateChanged:signed_out");
                 }
-                // ...
             }
         };
 

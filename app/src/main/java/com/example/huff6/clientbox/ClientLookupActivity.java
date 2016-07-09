@@ -1,9 +1,7 @@
 package com.example.huff6.clientbox;
 
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.*;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -12,7 +10,6 @@ import android.widget.Toast;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +18,11 @@ public class ClientLookupActivity extends AppCompatActivity {
 
     public static final String TAG = "Client Lookup Activity";
     protected ClientBoxApplication app;
-    //Client client;
     List<Client> clientList;
-    List<String> clientString;
-    private long numClients;
+    //List<String> clientString;
+    //private long numClients;
     ListView lv;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,19 +31,16 @@ public class ClientLookupActivity extends AppCompatActivity {
 
         app = (ClientBoxApplication)getApplication();
         clientList = new ArrayList<>();
-        clientString = new ArrayList<>();
+        //clientString = new ArrayList<>();
         readFromDatabase();
 
         populateListView();
     }
 
 
-
     //this function is to populate the listview with the
-    //database informtion
+    //database information
     void populateListView(){
-
-
         lv = (ListView) findViewById(R.id.listView);
 
         List<String> data = new ArrayList<>();
@@ -62,6 +56,7 @@ public class ClientLookupActivity extends AppCompatActivity {
 
         lv.setAdapter(arrayAdapter);
     }
+
 
     public void onClickView(View v) {
         populateListView();
@@ -87,9 +82,9 @@ public class ClientLookupActivity extends AppCompatActivity {
         showMessage("Data", buffer.toString());*/
     }
 
-    public void readFromDatabase() {
-        // Read from the database
 
+    // Read from the database
+    public void readFromDatabase() {
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
@@ -108,12 +103,12 @@ public class ClientLookupActivity extends AppCompatActivity {
 
                 // A client has changed, use the key to determine if we are displaying this
                 // client and if so displayed the changed comment.
-                Client newClient = dataSnapshot.getValue(Client.class);
-                String clientKey = dataSnapshot.getKey();
 
-                // ... ??
+                //Client newClient = dataSnapshot.getValue(Client.class);
+                //String clientKey = dataSnapshot.getKey();
+
+                // do nothing for now
                 //clientList.set(Integer.parseInt(clientKey), newClient);
-
             }
 
             @Override
@@ -122,9 +117,10 @@ public class ClientLookupActivity extends AppCompatActivity {
 
                 // A client has changed, use the key to determine if we are displaying this
                 // client and if so remove it.
-                String clientKey = dataSnapshot.getKey();
 
-                // ... ??
+                //String clientKey = dataSnapshot.getKey();
+
+                // do nothing for now
                 //clientList.remove(Integer.parseInt(clientKey));
             }
 
@@ -137,8 +133,7 @@ public class ClientLookupActivity extends AppCompatActivity {
                 //      Client movedClient = dataSnapshot.getValue(Client.class);
                 //      String clientKey = dataSnapshot.getKey();
 
-                // ...
-                // ???
+                // do nothing for now
             }
 
             @Override
@@ -150,13 +145,12 @@ public class ClientLookupActivity extends AppCompatActivity {
         };
         app.clientRef.addChildEventListener(childEventListener);
 
-
-        // TO READ THE NUMBER OF ITEMS      !!!!!!!!!!!
-
+        // HERE WE READ THE NUMBER OF ITEMS
+        /*
         ValueEventListener numListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                numClients = dataSnapshot.getValue(Long.class);
+                //numClients = dataSnapshot.getValue(Long.class);
             }
 
             @Override
@@ -165,23 +159,16 @@ public class ClientLookupActivity extends AppCompatActivity {
             }
         };
         app.numClientRef.addValueEventListener(numListener);
+        */
     }
 
-
-
-
-
-
-
-
-
-    private void showMessage(String title, String Message) {
+    /*private void showMessage(String title, String Message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(true);
         builder.setTitle(title);
         builder.setMessage(Message);
 
         builder.show();
-    }
+    }*/
 
 }

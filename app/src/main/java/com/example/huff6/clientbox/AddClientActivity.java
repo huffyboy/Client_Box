@@ -13,10 +13,9 @@ public class AddClientActivity extends AppCompatActivity {
 
     EditText name;
     EditText phone;
-
-
     List<Client> clientList;
     protected ClientBoxApplication app;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,11 +24,12 @@ public class AddClientActivity extends AppCompatActivity {
         app = (ClientBoxApplication)getApplication();
     }
 
+
     /**
      * add Client allows for the user to input information
      * about a new client into a database
      *
-     * @param v
+     * @param v the view to allow XML reference
      */
     public void addClient(View v) {
         name = (EditText) findViewById(R.id.name);
@@ -51,11 +51,14 @@ public class AddClientActivity extends AppCompatActivity {
         }
     }
 
-//not used
+
+    //not used
     public void onChangeValidateName()
     {
     }
-//not used
+
+
+    //not used
     public void onChangeValidateNumber()
     {
     }
