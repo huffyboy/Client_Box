@@ -127,41 +127,39 @@ public class ManualEntryActivity extends AppCompatActivity {
     public void onClickSubmitManualEntry(View v) {
         //submit info to database
 
-        try {
-            EditText et = (EditText) findViewById(R.id.editText3);
-            description = et.getText().toString();
         if (check) {
-
-            EditText et = (EditText) findViewById(R.id.editText3);
-            description = et.getText().toString();
-
-            //calc different between two dates
-            //http://www.javamadesoeasy.com/2015/07/difference-between-two-dates-in-days.html
-            Date startCal;
-            Date stopCal;
+            try {
+                EditText et = (EditText) findViewById(R.id.editText3);
+                description = et.getText().toString();
 
 
-            startCal = dateFormat.parse(start);
-            stopCal = dateFormat.parse(stop);
-            GregorianCalendar calendar1 = new GregorianCalendar();
-            GregorianCalendar calendar2 = new GregorianCalendar();
-
-            calendar1.setTime(startCal);
-            calendar2.setTime(stopCal);
+                //calc different between two dates
+                //http://www.javamadesoeasy.com/2015/07/difference-between-two-dates-in-days.html
+                Date startCal;
+                Date stopCal;
 
 
-        long duration = Math.abs((calendar2.getTimeInMillis() - calendar1.getTimeInMillis() / 1000));
+                startCal = dateFormat.parse(start);
+                stopCal = dateFormat.parse(stop);
+                GregorianCalendar calendar1 = new GregorianCalendar();
+                GregorianCalendar calendar2 = new GregorianCalendar();
 
-        Log tempLog = new Log();
-        tempLog.setLog(start, stop, (int)duration, description);
+                calendar1.setTime(startCal);
+                calendar2.setTime(stopCal);
 
-        //Client client = new Client(name, phoneNumber);
-        app.clientRef.child(clientReference).child("Logs").push().setValue(tempLog);
-        }
-        catch (ParseException ex){
-            //catching on
-            System.out.println("Parse error");
-        }
+
+                long duration = Math.abs((calendar2.getTimeInMillis() - calendar1.getTimeInMillis() / 1000));
+
+                Log tempLog = new Log();
+                tempLog.setLog(start, stop, (int)duration, description);
+
+                //Client client = new Client(name, phoneNumber);
+                app.clientRef.child(clientReference).child("Logs").push().setValue(tempLog);
+            }
+            catch (ParseException ex){
+                //catching on
+                System.out.println("Parse error");
+            }
             //app.database.setValue("client 00").push(tem);
             // we may want to increment number of logs per user?
             //numClients++;
@@ -282,6 +280,8 @@ public class ManualEntryActivity extends AppCompatActivity {
                 //close dialog
                 dialog.cancel();
                 clientReference = (String) (items.getItemAtPosition(position));
+
+                check = true;
             }
 
 

@@ -60,7 +60,9 @@ import android.widget.Chronometer;
       * @param v the view to allow XML reference
       */
      public void onClickReset(View v){
+
          chronometer.setBase(SystemClock.elapsedRealtime());
+         time = 0;
      }
 
      /**
