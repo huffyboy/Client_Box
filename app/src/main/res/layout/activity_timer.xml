@@ -45,7 +45,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Go To Manual Enrty"
+        android:text="Go To Manual Entry"
         android:id="@+id/btn_manual_entry"
         android:layout_marginTop="59dp"
         android:layout_below="@+id/chronometer"

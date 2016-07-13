@@ -34,20 +34,24 @@ public class AddClientActivity extends AppCompatActivity {
     public void addClient(View v) {
         name = (EditText) findViewById(R.id.name);
         phone = (EditText) findViewById(R.id.phone);
+        if (phone.getText().toString().matches("") || name.getText().toString().matches("")) {
 
-        //add client to database
-        app.clientRef.child(phone.getText().toString()).child("name").setValue(name.getText().toString());
+            Toast.makeText(AddClientActivity.this, "please fill name and number", Toast.LENGTH_SHORT).show();
+        } else {
+            //add client to database
+            app.clientRef.child(phone.getText().toString()).child("name").setValue(name.getText().toString());
 
-        //if added:
-        Toast.makeText(AddClientActivity.this, "client added", Toast.LENGTH_SHORT).show();
+            //if added:
+            Toast.makeText(AddClientActivity.this, "client added", Toast.LENGTH_SHORT).show();
 
-        //go back to main page
-        try {
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra(MainActivity.MAIN_ACTIVITY, "");
-            startActivity(intent);
-        } catch(Exception e) {
-            System.out.println(e.getMessage());
+            //go back to main page
+            try {
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.putExtra(MainActivity.MAIN_ACTIVITY, "");
+                startActivity(intent);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
 

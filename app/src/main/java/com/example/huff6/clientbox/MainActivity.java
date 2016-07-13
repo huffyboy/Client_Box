@@ -2,6 +2,7 @@ package com.example.huff6.clientbox;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -12,8 +13,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -26,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String TIMER_ACTIVITY         = "com.example.huff6.clientbox.TimerActivity";
     public static final String MANUAL_ENTRY_ACTIVITY  = "com.example.huff6.clientbox.ManualEntryActivity";
     public static final String CLIENT_LOOKUP_ACTIVITY = "com.example.huff6.clientbox.ClientLookupActivity";
-
+    public static final String preferences = "MyPrefsFile";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,8 +155,17 @@ public class MainActivity extends AppCompatActivity {
         for (Integer i = 0; i < 10; i++){
             array.add(i.toString());
         }
-        showMessage("yolo", array.toString());
+        //showMessage("yolo", array.toString());
+
+        //set the preferences here
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd 'at' HH:mm:ss z");
+        String currentDateandTime = sdf.format(new Date());
+        setPreferences(currentDateandTime);
+
+
+        showMessage("last synced", currentDateandTime);
     }
+
 
     private void showMessage(String title, String Message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -160,5 +173,28 @@ public class MainActivity extends AppCompatActivity {
         builder.setTitle(title);
         builder.setMessage(Message);
         builder.show();
+    }
+
+//http://stackoverflow.com/questions/23024831/android-shared-preferences-example
+    private void setPreferences(String date) {
+        SharedPreferences.Editor editor = getSharedPreferences(preferences, MODE_PRIVATE).edit();
+        editor.putString("name", date);
+        //editor.putInt("idName", date);
+        editor.commit();
+    }
+
+    private String getPreferences() {
+
+        SharedPreferences prefs = getSharedPreferences(preferences, MODE_PRIVATE);
+        String restoredText = prefs.getString("text", null);
+        if (restoredText != null) {
+            String name = prefs.getString("name", "No name defined");//"No name defined" is the default value.
+            int idName = prefs.getInt("idName", 0); //0 is the default value.
+
+            return restoredText;
+        }
+        else {
+            return "none";
+        }
     }
 }

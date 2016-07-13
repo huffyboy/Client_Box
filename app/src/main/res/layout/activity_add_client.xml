@@ -12,6 +12,8 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ "
+        android:maxLength="30"
         android:id="@+id/name"
         android:hint="Name"
         android:layout_alignParentTop="true"
@@ -24,7 +26,8 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="phone"
+        android:inputType="number"
+        android:maxLength="11"
         android:ems="10"
         android:id="@+id/phone"
         android:layout_alignRight="@+id/name"
