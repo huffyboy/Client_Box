@@ -5,25 +5,38 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.provider.CallLog;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
 
     //We need a thread singleton object here
-    DatabaseHelper myDb;
+    //DatabaseHelper myDb;
 
     public static final String MAIN_ACTIVITY          = "com.example.huff6.clientbox.MainActivity";
     public static final String ADD_CLIENT_ACTIVITY    = "com.example.huff6.clientbox.AddClientActivity";
@@ -31,13 +44,35 @@ public class MainActivity extends AppCompatActivity {
     public static final String MANUAL_ENTRY_ACTIVITY  = "com.example.huff6.clientbox.ManualEntryActivity";
     public static final String CLIENT_LOOKUP_ACTIVITY = "com.example.huff6.clientbox.ClientLookupActivity";
     public static final String preferences = "MyPrefsFile";
+    protected ClientBoxApplication app;
+    String check;
+    long numClients;
+    List<Client> clientList;
+    List<String> phoneNumbers;
+
+    Button syncr;
+
+    boolean stillReading;
+
+    SimpleDateFormat timeStamp = new SimpleDateFormat("yyyy/MM/dd 'at' HH:mm:ss z");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        myDb = new DatabaseHelper(this);
-        updateCallInfo();
+        //myDb = new DatabaseHelper(this);
+        clientList = new ArrayList<>();
+
+        syncr = (Button) findViewById(R.id.button4);
+        syncr.setVisibility(View.INVISIBLE);
+
+        stillReading = false;
+
+        //new thread
+
+//        Looper.prepare();
+        new loadTask().execute();
+
     }
 
     /**
@@ -104,11 +139,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    void updateCallInfo(){
+    void updateCallInfo() throws ParseException {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
             Log.w("MainActivity","No permissions");
             return;
         }
+
 
         Cursor managedCursor = getContentResolver().query(CallLog.Calls.CONTENT_URI,
                 null, null, null, null);
@@ -118,12 +154,16 @@ public class MainActivity extends AppCompatActivity {
         int type = managedCursor.getColumnIndex(CallLog.Calls.TYPE);
         int date = managedCursor.getColumnIndex(CallLog.Calls.DATE);
         int duration = managedCursor.getColumnIndex(CallLog.Calls.DURATION);
+        phoneNumbers = new ArrayList<String>();
 
+        Date checkDate = timeStamp.parse(getPreferences());
         while (managedCursor.moveToNext()) {
             String phNumber = managedCursor.getString(number);
             String callType = managedCursor.getString(type);
             String callDate = managedCursor.getString(date);
             Date callDayTime = new Date(Long.valueOf(callDate));
+            check = phNumber.substring(2);
+
             String callDuration = managedCursor.getString(duration);
             String dir = "";
             int dircode = Integer.parseInt(callType);
@@ -141,31 +181,72 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
 
-            // ADD TO TABLE
-            if (!dir.equals("MISSED")) {
-                myDb.insertData("UNKNOWN", phNumber, callDayTime.toString(),
-                        "SOME TIME", callDuration, dir);
+            //phoneNumbers.add(check);
+            //https://www.mkyong.com/java/how-to-compare-dates-in-java/
+            if(checkDate.compareTo(callDayTime)<0) {
+                System.out.println("CALL AFTER TIME");
+                // ADD TO TABLE
+                if (!dir.equals("MISSED")) {
+
+
+                    check = phNumber.substring(2);
+                    phoneNumbers.add(check);
+                }
             }
         }
         managedCursor.close();
     }
 
-    public void synchronize(View v){
-        ArrayList<String> array = new ArrayList<>();
-        for (Integer i = 0; i < 10; i++){
-            array.add(i.toString());
-        }
-        //showMessage("yolo", array.toString());
+    public void synchronize(View v) throws ParseException {
 
-        //set the preferences here
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd 'at' HH:mm:ss z");
-        String currentDateandTime = sdf.format(new Date());
-        setPreferences(currentDateandTime);
+            syncr.setVisibility(View.INVISIBLE);
+            // call update function
+            //updateCallInfo();
 
+            //new thread
+            new sync().execute();
+            stillReading = false;
+            //set the preferences here
 
-        showMessage("last synced", currentDateandTime);
+            String currentDateandTime = timeStamp.format(new Date());
+            //setPreferences(currentDateandTime);
+
+            //timeStamp.parse(getPreferences()).toString()
     }
 
+    private String getNumbers()
+    {
+        //clientList = new ArrayList<>();
+        String numbers = "";
+        List<Integer> temp = new ArrayList<>();
+        System.out.println("BEFORE CHECKING PHONE NUMS");
+        for (int i = 0; i < phoneNumbers.size(); i++){
+            int num = checkNumbers(phoneNumbers.get(i));
+            if (num > -1) {
+                System.out.println("YAY!");
+                temp.add(num);
+            }
+        }
+
+        for (int i = 0; i < temp.size(); i++){
+
+            //Toast.makeText(MainActivity.this, "check", Toast.LENGTH_SHORT).show();
+            numbers += clientList.get(temp.get(i)).getName() + " " + clientList.get(temp.get(i)).getNum() + "\n";
+        }
+        return numbers;
+    }
+
+
+    private int checkNumbers(String number) {
+        //System.out.println("CHECK NUMBERES");
+        for (int i = 0; i < clientList.size(); i++) {
+            if (clientList.get(i).getNum().equals(number)) {
+                System.out.println("FOUND");
+                return i;
+            }
+        }
+        return -1;
+    }
 
     private void showMessage(String title, String Message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -179,22 +260,169 @@ public class MainActivity extends AppCompatActivity {
     private void setPreferences(String date) {
         SharedPreferences.Editor editor = getSharedPreferences(preferences, MODE_PRIVATE).edit();
         editor.putString("name", date);
-        //editor.putInt("idName", date);
         editor.commit();
     }
 
     private String getPreferences() {
 
         SharedPreferences prefs = getSharedPreferences(preferences, MODE_PRIVATE);
-        String restoredText = prefs.getString("text", null);
+        String restoredText = prefs.getString("name", null);
         if (restoredText != null) {
-            String name = prefs.getString("name", "No name defined");//"No name defined" is the default value.
-            int idName = prefs.getInt("idName", 0); //0 is the default value.
-
             return restoredText;
         }
         else {
             return "none";
+        }
+    }
+
+
+    // Read from the database
+    public void readFromDatabase() {
+        ChildEventListener childEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                    // A new client has been added, add it to the displayed list
+                    Client theClient = dataSnapshot.getValue(Client.class);
+                    theClient.setNum(dataSnapshot.getKey());
+                    clientList.add(theClient);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(MainActivity.this, "Failed to load comments.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        };
+        app.clientRef.addChildEventListener(childEventListener);
+
+        ValueEventListener numListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                numClients = dataSnapshot.getValue(Long.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        };
+        app.numClientRef.addValueEventListener(numListener);
+    }
+
+
+
+
+    //async task..
+
+
+    class sync extends  loadTask{
+        @Override
+        protected String doInBackground(Void... params) {
+
+            //
+            //Looper.prepare();
+
+            try {
+                updateCallInfo();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            publishProgress("");
+            stillReading = true;
+
+            return "now synced";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            Toast.makeText(getApplicationContext(),result,Toast.LENGTH_LONG).show();
+            if (phoneNumbers.size() == 0) {
+                showMessage("no new client calls", "");
+            } else {
+                showMessage("last synced\n" + getPreferences(), getNumbers());
+            }
+
+            String currentDateandTime = timeStamp.format(new Date());
+            setPreferences(currentDateandTime);
+
+            syncr.setVisibility(View.VISIBLE);
+        }
+    }
+    //load task AsyncTask method
+    class loadTask extends AsyncTask<Void,String,String> {
+
+        @Override
+        protected void onPreExecute() {
+           //progress bar
+            /*adapter = (ArrayAdapter) lv.getAdapter();
+
+            // set progress bar
+            progressBar = (ProgressBar) findViewById(R.id.progressBar);
+            progressBar.setMax(10);
+            progressBar.setProgress(0);
+            progressBar.setVisibility(View.VISIBLE);
+            count = 0;*/
+            app = (ClientBoxApplication)getApplication();
+            check = "no new updates";
+
+
+
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+
+            //
+            Looper.prepare();
+            readFromDatabase();
+            try {
+                updateCallInfo();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            getNumbers();
+
+            publishProgress("");
+
+            return "updated";
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+
+            //progress bar
+            /*
+            adapter.add(values[0]);
+            count++;
+            progressBar.setProgress(count);
+            */
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            Toast.makeText(getApplicationContext(),result,Toast.LENGTH_LONG).show();
+            stillReading = true;
+
+            syncr.setVisibility(View.VISIBLE);
+            //stillReading = true;
+            //progressBar.setVisibility(View.GONE);
         }
     }
 }
