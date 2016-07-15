@@ -7,6 +7,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
  public class TimerActivity extends AppCompatActivity {
 
@@ -14,6 +19,12 @@ import android.widget.Chronometer;
      Button startStop;
      long time = 0;
      Boolean start = false;
+     Date startDate;
+     Date stopDate;
+     String startString;
+     String stopString;
+     SimpleDateFormat dateFormat;
+
 
 
      @Override
@@ -22,8 +33,10 @@ import android.widget.Chronometer;
         setContentView(R.layout.activity_timer);
         //      Intent intent = getIntent();
         //      String message = intent.getStringExtra(MainActivity.TIMER_ACTIVITY);
-        chronometer = (Chronometer) findViewById(R.id.chronometer);
-        startStop = (Button) findViewById(R.id.btn_toggle_start_stop);
+         chronometer = (Chronometer) findViewById(R.id.chronometer);
+         startStop = (Button) findViewById(R.id.btn_toggle_start_stop);
+         dateFormat = new SimpleDateFormat("dd/mm/yyyykk:mm", Locale.US);
+         startString = stopString = "";
      }
 
      void onClickManualEntry(){
@@ -42,14 +55,18 @@ import android.widget.Chronometer;
       */
      public void onClickStartStop(View v){
         if (!start) {
+            startDate = new Date(); //sets current date
             chronometer.setBase(SystemClock.elapsedRealtime()+time);
             chronometer.start();
             startStop.setText("Stop");
+            startString = setDateString(startDate);
         }
         else {
             time = chronometer.getBase()-SystemClock.elapsedRealtime();
             chronometer.stop();
             startStop.setText("Start");
+            stopDate = new Date();
+            stopString = setDateString(stopDate);
         }
         start = !start;
     }
@@ -72,12 +89,30 @@ import android.widget.Chronometer;
       */
      public void goToManualEntry(View v){
          try {
+             //stop the chrono
+             chronometer.stop();
+             //if the timer is running, then
+             if (start){
+                 stopDate = new Date();
+                 stopString = setDateString(stopDate);
+             }
+             else if (startString.equals("")){
+                 Toast.makeText(TimerActivity.this, "Please start your entry.", Toast.LENGTH_SHORT).show();
+             }
              Intent intent = new Intent(this, ManualEntryActivity.class);
-             intent.putExtra(MainActivity.MANUAL_ENTRY_ACTIVITY, "");
+             //passing intent - http://stackoverflow.com/questions/19286970/using-intents-to-pass-data-between-activities-in-android
+             intent.putExtra("startString", startString);
+             intent.putExtra("stopString", stopString);
              startActivity(intent);
          } catch(Exception e) {
              System.out.println(e.getMessage());
          }
+     }
+
+     public String setDateString(Date date){
+         //get date to string
+         //https://www.mkyong.com/java/java-how-to-get-current-date-time-date-and-calender/
+        return dateFormat.format(date);
      }
 
 }
