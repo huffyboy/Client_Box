@@ -76,7 +76,7 @@ public class ManualEntryActivity extends AppCompatActivity {
         check = false;
         startId = true;
         clientSelected = false;
-        dateFormat = new SimpleDateFormat("dd/mm/yyyykk:mm", Locale.US);
+        dateFormat = new SimpleDateFormat("dd/mm/yyyy kk:mm:ss z", Locale.US);
 
         startCal = null;
         stopCal = null;
@@ -328,7 +328,7 @@ public class ManualEntryActivity extends AppCompatActivity {
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                android.util.Log.d(ClientLookupActivity.TAG, "onChildAdded:" + dataSnapshot.getKey());
+                android.util.Log.d(ClientHistoryActivity.TAG, "onChildAdded:" + dataSnapshot.getKey());
 
                 // A new client has been added, add it to the displayed list
                 Client theClient = dataSnapshot.getValue(Client.class);
@@ -338,7 +338,7 @@ public class ManualEntryActivity extends AppCompatActivity {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                android.util.Log.d(ClientLookupActivity.TAG, "onChildChanged:" + dataSnapshot.getKey());
+                android.util.Log.d(ClientHistoryActivity.TAG, "onChildChanged:" + dataSnapshot.getKey());
                 // A client has changed, use the key to determine if we are displaying this
                 // client and if so displayed the changed comment.
                 //      Client newClient = dataSnapshot.getValue(Client.class);
@@ -349,7 +349,7 @@ public class ManualEntryActivity extends AppCompatActivity {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                android.util.Log.d(ClientLookupActivity.TAG, "onChildRemoved:" + dataSnapshot.getKey());
+                android.util.Log.d(ClientHistoryActivity.TAG, "onChildRemoved:" + dataSnapshot.getKey());
                 // A client has changed, use the key to determine if we are displaying this
                 // client and if so remove it.
                 //      String clientKey = dataSnapshot.getKey();
@@ -359,7 +359,7 @@ public class ManualEntryActivity extends AppCompatActivity {
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                android.util.Log.d(ClientLookupActivity.TAG, "onChildMoved:" + dataSnapshot.getKey());
+                android.util.Log.d(ClientHistoryActivity.TAG, "onChildMoved:" + dataSnapshot.getKey());
                 // A client has changed position, use the key to determine if we are
                 // displaying this client and if so move it.
                 //      Client movedClient = dataSnapshot.getValue(Client.class);

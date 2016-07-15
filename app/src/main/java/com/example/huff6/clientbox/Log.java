@@ -11,7 +11,7 @@ public class Log {
     private long duration;
     private String notes;
 
-    Log () {
+    public Log () {
         startTime = "";
         stopTime  = "";
         duration  = 0;

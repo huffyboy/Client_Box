@@ -14,9 +14,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
@@ -24,13 +22,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -48,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     String check;
     long numClients;
     List<Client> clientList;
-    List<String> phoneNumbers;
+    ArrayList<com.example.huff6.clientbox.Log> phoneLog;
 
     Button syncr;
 
@@ -130,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public void goToClientLookup(View v) {
         try {
-            Intent intent = new Intent(this, ClientLookupActivity.class);
+            Intent intent = new Intent(this, ClientHistoryActivity.class);
             intent.putExtra(MainActivity.CLIENT_LOOKUP_ACTIVITY, "");
             startActivity(intent);
             Log.i("MainActivity", "Client Lookup Button Pressed");
@@ -154,7 +151,10 @@ public class MainActivity extends AppCompatActivity {
         int type = managedCursor.getColumnIndex(CallLog.Calls.TYPE);
         int date = managedCursor.getColumnIndex(CallLog.Calls.DATE);
         int duration = managedCursor.getColumnIndex(CallLog.Calls.DURATION);
-        phoneNumbers = new ArrayList<String>();
+        phoneLog = new ArrayList<com.example.huff6.clientbox.Log>();
+        com.example.huff6.clientbox.Log tempLog = new com.example.huff6.clientbox.Log();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy kk:mm:ss z", Locale.US);
 
         Date checkDate = timeStamp.parse(getPreferences());
         while (managedCursor.moveToNext()) {
@@ -181,16 +181,24 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
 
-            //phoneNumbers.add(check);
+            //phoneLog.add(check);
             //https://www.mkyong.com/java/how-to-compare-dates-in-java/
             if(checkDate.compareTo(callDayTime)<0) {
                 System.out.println("CALL AFTER TIME");
                 // ADD TO TABLE
                 if (!dir.equals("MISSED")) {
 
-
                     check = phNumber.substring(2);
-                    phoneNumbers.add(check);
+
+                    long l = callDayTime.getTime() + Integer.parseInt(callDuration)*1000;
+                    Date d = new Date(l);
+                    System.out.println();
+                    tempLog.setLog(
+                            sdf.format(callDayTime),
+                            sdf.format(d),
+                            Long.parseLong(callDuration),
+                            check);
+                    phoneLog.add(tempLog);
                 }
             }
         }
@@ -220,17 +228,20 @@ public class MainActivity extends AppCompatActivity {
         String numbers = "";
         List<Integer> temp = new ArrayList<>();
         System.out.println("BEFORE CHECKING PHONE NUMS");
-        for (int i = 0; i < phoneNumbers.size(); i++){
-            int num = checkNumbers(phoneNumbers.get(i));
+        for (int i = 0; i < phoneLog.size(); i++){
+            int num = checkNumbers(phoneLog.get(i).getNotes());
             if (num > -1) {
-                System.out.println("YAY!");
+
+                //add to the database
+                com.example.huff6.clientbox.Log tempLog = phoneLog.get(i);
                 temp.add(num);
+                String phoneNumber = tempLog.getNotes();
+                tempLog.setNotes("phone call");
+                app.clientRef.child(phoneNumber).child("Logs").push().setValue(tempLog);
             }
         }
 
         for (int i = 0; i < temp.size(); i++){
-
-            //Toast.makeText(MainActivity.this, "check", Toast.LENGTH_SHORT).show();
             numbers += clientList.get(temp.get(i)).getName() + " " + clientList.get(temp.get(i)).getNum() + "\n";
         }
         return numbers;
@@ -352,7 +363,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
 
             Toast.makeText(getApplicationContext(),result,Toast.LENGTH_LONG).show();
-            if (phoneNumbers.size() == 0) {
+            if (phoneLog.size() == 0) {
                 showMessage("no new client calls", "");
             } else {
                 showMessage("last synced\n" + getPreferences(), getNumbers());
