@@ -35,26 +35,52 @@ public class ManualEntryActivity extends AppCompatActivity {
 
     SimpleDateFormat dateFormat;
     String start, stop, date1, time1, clientReference, description;
-    boolean startId, isValid, check;
+    boolean startId, isValid, check, clientSelected;
+    Date startCal, stopCal;
     List<Client> clientList;
     List<String> clientString;
     TextView textView;
     ListView modeList, items;
     protected ClientBoxApplication app;
-    private static TextView set_time;
+    private static TextView set_time, set_time2;
     private static final int Date_id = 0;
     private static final int Time_id = 1;
-
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manual_entry);
+        //textView = (TextView) findViewById(R.id.textView);
+        set_time = (TextView) findViewById(R.id.set_time);
+        set_time2 = (TextView) findViewById(R.id.set_time2);
+        //passing intent - http://stackoverflow.com/questions/19286970/using-intents-to-pass-data-between-activities-in-android
+        //also checking extras - http://stackoverflow.com/questions/8255618/check-if-extras-are-set-or-not
+        //and making sure it isn't null - http://stackoverflow.com/questions/13408419/how-do-i-tell-if-intent-extras-exist-in-android
+        //http://stackoverflow.com/questions/4233873/how-do-i-get-extra-data-from-intent-on-android
+        intent = getIntent();
+
+        if (intent.getStringExtra("startString") != null) {
+            if (intent.getExtras() != null){
+                set_time.setText(intent.getStringExtra("startString"));
+                set_time2.setText(intent.getStringExtra("stopString"));
+                start = intent.getStringExtra("startString");
+                stop = intent.getStringExtra("stopString");
+           }
+        } else {
+            start = "";
+            stop = "";
+        }
+
         app = (ClientBoxApplication)getApplication();
         check = false;
         startId = true;
+        clientSelected = false;
         dateFormat = new SimpleDateFormat("dd/mm/yyyykk:mm", Locale.US);
-        set_time = (TextView) findViewById(R.id.set_time);
+
+        startCal = null;
+        stopCal = null;
+
         textView = (TextView) findViewById(R.id.textView);
         EditText et = (EditText) findViewById(R.id.editText3);
         assert et != null;
@@ -62,6 +88,7 @@ public class ManualEntryActivity extends AppCompatActivity {
         clientList = new ArrayList<>();
         clientString = new ArrayList<>();
         readFromDatabase();
+
     }
 
 
@@ -91,6 +118,7 @@ public class ManualEntryActivity extends AppCompatActivity {
      */
     public void onClickSubmitManualEntry(View v) {
         //submit info to database
+        checkEntry();
         if (check) {
             try {
                 EditText et = (EditText) findViewById(R.id.editText3);
@@ -99,7 +127,6 @@ public class ManualEntryActivity extends AppCompatActivity {
 
                 //calc different between two dates
                 //http://www.javamadesoeasy.com/2015/07/difference-between-two-dates-in-days.html
-                Date startCal, stopCal;
                 startCal = dateFormat.parse(start);
                 stopCal = dateFormat.parse(stop);
                 GregorianCalendar calendar1 = new GregorianCalendar();
@@ -107,9 +134,10 @@ public class ManualEntryActivity extends AppCompatActivity {
                 calendar1.setTime(startCal);
                 calendar2.setTime(stopCal);
 
-                long duration = Math.abs((calendar2.getTimeInMillis() - calendar1.getTimeInMillis() / 1000));
+                long duration = Math.abs((calendar2.getTimeInMillis() - calendar1.getTimeInMillis()));
+                duration = duration / 1000;
                 Log tempLog = new Log();
-                tempLog.setLog(start, stop, (int)duration, description);
+                tempLog.setLog(start, stop, duration, description);
                 app.clientRef.child(clientReference).child("Logs").push().setValue(tempLog);
             }
             catch (ParseException ex){
@@ -129,8 +157,6 @@ public class ManualEntryActivity extends AppCompatActivity {
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
-        } else {
-            Toast.makeText(ManualEntryActivity.this, "please select a client", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -145,7 +171,6 @@ public class ManualEntryActivity extends AppCompatActivity {
         int day    = c.get(Calendar.DAY_OF_MONTH);
         int hour   = c.get(Calendar.HOUR_OF_DAY);
         int minute = c.get(Calendar.MINUTE);
-
         switch (id) {
             case Date_id:
                 // Open the datepicker dialog
@@ -227,11 +252,13 @@ public class ManualEntryActivity extends AppCompatActivity {
                 // set textView
                 String text = (String) (modeList.getItemAtPosition(position));
                 textView.setText(text);
+                //make sure the client has a value
+                clientSelected = true;
 
                 // close dialog
                 dialog.cancel();
                 clientReference = (String) (items.getItemAtPosition(position));
-                check = true;
+
             }
         });
     }
@@ -241,8 +268,53 @@ public class ManualEntryActivity extends AppCompatActivity {
         populateListView();
     }*/
 
+    public void checkEntry() {
+        //Throw appropriate toast if not valid
 
-    public void validateTime() {
+        if(!(clientSelected) || stop.equals("")|| start.equals("")) {
+            String toastString = "";
+
+            if(!(clientSelected)) {
+                toastString = "client";
+            } else if(start.equals("")) {
+                toastString = "start time";
+            } else if(stop.equals("")) {
+                toastString = "stop time";
+            }
+
+            Toast.makeText(ManualEntryActivity.this, "Please select a " + toastString, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (!validateTime()){
+            //returns if validateTime is falso
+            return;
+        } else {
+            check = true;
+        }
+    }
+
+    //Compare the time entries here to see if they are before or after each other
+    public boolean validateTime() {
+        try {
+            startCal = dateFormat.parse(start);
+            stopCal = dateFormat.parse(stop);
+        }
+
+        catch (ParseException ex) {
+            System.out.println(ex);
+        }
+
+        //how to compare two dates
+        //http://stackoverflow.com/questions/1505496/should-i-use-calendar-compareto-to-compare-dates
+        //more info here -http://www.tutorialspoint.com/java/util/date_compareto.htm
+
+        if (startCal.compareTo(stopCal) > 0) {
+            Toast.makeText(ManualEntryActivity.this, "Start/Stop Times are not valid.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        return true;
+
     }
 
 
