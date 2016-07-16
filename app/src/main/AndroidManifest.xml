@@ -11,7 +11,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:name=".ClientBoxApplication">
+        android:name=".ClientBoxApplication"
+        android:screenOrientation="portrait" >
 
         <activity android:name=".LoginActivity">
             <intent-filter>
@@ -20,11 +21,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
-        <activity android:name=".AddClientActivity" />
-        <activity android:name=".TimerActivity" />
-        <activity android:name=".ManualEntryActivity" />
-        <activity android:name=".ClientHistoryActivity"></activity>
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".AddClientActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".TimerActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ManualEntryActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ClientHistoryActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>
