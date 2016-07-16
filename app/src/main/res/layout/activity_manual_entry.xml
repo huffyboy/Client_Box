@@ -93,7 +93,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Select client"
+        android:text="Select Client"
         android:id="@+id/textView"
         android:onClick="showClients"
         android:clickable="true"
@@ -106,6 +106,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:backgroundTint="@android:color/holo_blue_light" />
+        android:backgroundTint="@android:color/holo_blue_light"
+        android:typeface="normal" />
 
 </RelativeLayout>

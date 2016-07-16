@@ -175,11 +175,13 @@ public class ClientHistoryActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... params) {
             readFromDatabase(false, "");
+            populateListView();
             return "done";
         }
 
         @Override
         protected void onProgressUpdate(String... values) {
+            populateListView();
         }
 
         @Override
