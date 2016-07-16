@@ -34,13 +34,13 @@ import java.util.Locale;
 public class ManualEntryActivity extends AppCompatActivity {
 
     SimpleDateFormat dateFormat;
-    String start, stop, date1, time1, clientReference, description;
+    String start, stop, date1, time1, clientPhone, description;
     boolean startId, isValid, check, clientSelected;
-    Date startCal, stopCal;
+    Date startDate, stopDate;
     List<Client> clientList;
-    List<String> clientString;
+    List<String> clientString, items;
     TextView textView;
-    ListView modeList, items;
+    ListView modeList;
     protected ClientBoxApplication app;
     private static TextView set_time, set_time2;
     private static final int Date_id = 0;
@@ -51,49 +51,47 @@ public class ManualEntryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manual_entry);
-        //textView = (TextView) findViewById(R.id.textView);
+        textView = (TextView) findViewById(R.id.textView);
         set_time = (TextView) findViewById(R.id.set_time);
         set_time2 = (TextView) findViewById(R.id.set_time2);
-        //passing intent - http://stackoverflow.com/questions/19286970/using-intents-to-pass-data-between-activities-in-android
-        //also checking extras - http://stackoverflow.com/questions/8255618/check-if-extras-are-set-or-not
-        //and making sure it isn't null - http://stackoverflow.com/questions/13408419/how-do-i-tell-if-intent-extras-exist-in-android
-        //http://stackoverflow.com/questions/4233873/how-do-i-get-extra-data-from-intent-on-android
-        intent = getIntent();
+        items = new ArrayList<>();
+        app = (ClientBoxApplication)getApplication();
+        check = false;
+        startId = true;
+        clientSelected = false;
+        dateFormat = new SimpleDateFormat("MM/dd/yyyy kk:mm:ss z", Locale.US);
 
+        intent = getIntent();
         if (intent.getStringExtra("startString") != null) {
-            if (intent.getExtras() != null){
-                set_time.setText(intent.getStringExtra("startString"));
-                set_time2.setText(intent.getStringExtra("stopString"));
-                start = intent.getStringExtra("startString");
-                stop = intent.getStringExtra("stopString");
-           }
+            //if (intent.getExtras() != null){
+            set_time.setText(intent.getStringExtra("startString"));
+            set_time2.setText(intent.getStringExtra("stopString"));
+            start = intent.getStringExtra("startString");
+            stop = intent.getStringExtra("stopString");
+            //startDate = dateFormat.parse(start);
+           //}
         } else {
             start = "";
             stop = "";
         }
 
-        app = (ClientBoxApplication)getApplication();
-        check = false;
-        startId = true;
-        clientSelected = false;
-        dateFormat = new SimpleDateFormat("dd/mm/yyyy kk:mm:ss z", Locale.US);
 
-        startCal = null;
-        stopCal = null;
 
-        textView = (TextView) findViewById(R.id.textView);
-        EditText et = (EditText) findViewById(R.id.editText3);
-        assert et != null;
-        description = et.getText().toString();
+        //startDate = null;
+        //stopDate = null;
+
+        EditText editText = (EditText) findViewById(R.id.editText3);
+        assert editText != null;
+        description = editText.getText().toString();
         clientList = new ArrayList<>();
         clientString = new ArrayList<>();
         readFromDatabase();
-
     }
 
 
     public void startTimeSetter(View v) {
         // Show time dialog
+        //SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy kk:mm", Locale.US);
         set_time = (TextView) findViewById(R.id.set_time);
         showDialog(Time_id);
         //set_date = (TextView) findViewById(R.id.set_date);
@@ -127,18 +125,18 @@ public class ManualEntryActivity extends AppCompatActivity {
 
                 //calc different between two dates
                 //http://www.javamadesoeasy.com/2015/07/difference-between-two-dates-in-days.html
-                startCal = dateFormat.parse(start);
-                stopCal = dateFormat.parse(stop);
+                startDate = dateFormat.parse(start);
+                stopDate = dateFormat.parse(stop);
                 GregorianCalendar calendar1 = new GregorianCalendar();
                 GregorianCalendar calendar2 = new GregorianCalendar();
-                calendar1.setTime(startCal);
-                calendar2.setTime(stopCal);
+                calendar1.setTime(startDate);
+                calendar2.setTime(stopDate);
 
                 long duration = Math.abs((calendar2.getTimeInMillis() - calendar1.getTimeInMillis()));
                 duration = duration / 1000;
                 Log tempLog = new Log();
                 tempLog.setLog(start, stop, duration, description);
-                app.clientRef.child(clientReference).child("Logs").push().setValue(tempLog);
+                app.clientRef.child(clientPhone).child("Logs").push().setValue(tempLog);
             }
             catch (ParseException ex){
                 //catching on
@@ -190,9 +188,16 @@ public class ManualEntryActivity extends AppCompatActivity {
         @Override
         public void onDateSet(DatePicker view, int year, int month, int day) {
             // store the data in one string and set it to text
-            date1 = String.valueOf(month + 1) + "/" + String.valueOf(day)
+            String m;
+            if (month < 10){
+                m = "0" + String.valueOf(month + 1);
+            } else {
+                m = String.valueOf(month + 1);
+            }
+            date1 = m + "/" + String.valueOf(day)
                     + "/" + String.valueOf(year);
             set_time.setText(date1);
+
         }
     };
 
@@ -203,16 +208,21 @@ public class ManualEntryActivity extends AppCompatActivity {
         public void onTimeSet(TimePicker view, int hour, int minute) {
             // store the data in one string and set it to text
             String min = String.valueOf(minute);
+            Date d = new Date();
+            SimpleDateFormat s = new SimpleDateFormat("z", Locale.US);
+            String zone = s.format(d);
             if (minute < 10)
                 min = "0" + String.valueOf(minute);
-            time1 = String.valueOf(hour) + ":" + min;
+            time1 = String.valueOf(hour) + ":" + min + ":00 " + zone;
 
+
+            //dateFormat = new SimpleDateFormat("dd/mm/yyyy kk:mm:ss z", Locale.US);
             // set the start or stop string accordingly
             if (startId) {
-                start = date1 + time1;
+                start = date1 + " " + time1;
                 startId = false;
             } else {
-                stop = date1 + time1;
+                stop = date1 + " " + time1;
             }
             String dateAndTime = date1 + " " + time1;
             set_time.setText(dateAndTime);
@@ -223,10 +233,10 @@ public class ManualEntryActivity extends AppCompatActivity {
     /**
      * update start and stop inputs
      */
-    public void update(String startInput, String stopInput) {
-        start = startInput;
-        stop = stopInput;
-    }
+    //public void update(String startInput, String stopInput) {
+    //    start = startInput;
+    //    stop = stopInput;
+    //}
 
 
     /**
@@ -257,8 +267,7 @@ public class ManualEntryActivity extends AppCompatActivity {
 
                 // close dialog
                 dialog.cancel();
-                clientReference = (String) (items.getItemAtPosition(position));
-
+                clientPhone = items.get(position);
             }
         });
     }
@@ -285,10 +294,8 @@ public class ManualEntryActivity extends AppCompatActivity {
             Toast.makeText(ManualEntryActivity.this, "Please select a " + toastString, Toast.LENGTH_SHORT).show();
             return;
         }
-        if (!validateTime()){
-            //returns if validateTime is falso
-            return;
-        } else {
+
+        else if (validateTime()){
             check = true;
         }
     }
@@ -296,19 +303,21 @@ public class ManualEntryActivity extends AppCompatActivity {
     //Compare the time entries here to see if they are before or after each other
     public boolean validateTime() {
         try {
-            startCal = dateFormat.parse(start);
-            stopCal = dateFormat.parse(stop);
-        }
-
-        catch (ParseException ex) {
+            startDate = dateFormat.parse(start);
+            stopDate = dateFormat.parse(stop);
+        } catch (ParseException ex) {
             System.out.println(ex);
+            System.out.println(start + "blah blah blah blah" + stop);
         }
 
         //how to compare two dates
         //http://stackoverflow.com/questions/1505496/should-i-use-calendar-compareto-to-compare-dates
         //more info here -http://www.tutorialspoint.com/java/util/date_compareto.htm
 
-        if (startCal.compareTo(stopCal) > 0) {
+        if (
+                startDate.compareTo(
+                        stopDate)
+                        > 0) {
             Toast.makeText(ManualEntryActivity.this, "Start/Stop Times are not valid.", Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -328,8 +337,6 @@ public class ManualEntryActivity extends AppCompatActivity {
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                android.util.Log.d(ClientHistoryActivity.TAG, "onChildAdded:" + dataSnapshot.getKey());
-
                 // A new client has been added, add it to the displayed list
                 Client theClient = dataSnapshot.getValue(Client.class);
                 theClient.setNum(dataSnapshot.getKey());
@@ -338,40 +345,18 @@ public class ManualEntryActivity extends AppCompatActivity {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                android.util.Log.d(ClientHistoryActivity.TAG, "onChildChanged:" + dataSnapshot.getKey());
-                // A client has changed, use the key to determine if we are displaying this
-                // client and if so displayed the changed comment.
-                //      Client newClient = dataSnapshot.getValue(Client.class);
-                //      String clientKey = dataSnapshot.getKey();
-
-                // Don't need this right now
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                android.util.Log.d(ClientHistoryActivity.TAG, "onChildRemoved:" + dataSnapshot.getKey());
-                // A client has changed, use the key to determine if we are displaying this
-                // client and if so remove it.
-                //      String clientKey = dataSnapshot.getKey();
-
-                // Don't need this right now
             }
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                android.util.Log.d(ClientHistoryActivity.TAG, "onChildMoved:" + dataSnapshot.getKey());
-                // A client has changed position, use the key to determine if we are
-                // displaying this client and if so move it.
-                //      Client movedClient = dataSnapshot.getValue(Client.class);
-                //      String clientKey = dataSnapshot.getKey();
-
-                // Don't need this right now
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(ManualEntryActivity.this, "Failed to load comments.",
-                        Toast.LENGTH_SHORT).show();
             }
         };
         app.clientRef.addChildEventListener(childEventListener);
@@ -380,13 +365,12 @@ public class ManualEntryActivity extends AppCompatActivity {
 
     void populateListView(){
         modeList = new ListView(this);
-        items = new ListView(this);
         List<String> data = new ArrayList<>();
-        List<String> dataOther = new ArrayList<>();
+        items = new ArrayList<>();
         for (Client client : clientList) {
             data.add(client.getName() + "\n"
                     + client.getNum());
-            dataOther.add(client.getNum());
+            items.add(client.getNum());
         }
 
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
@@ -394,11 +378,5 @@ public class ManualEntryActivity extends AppCompatActivity {
                 android.R.layout.simple_list_item_1,
                 data );
         modeList.setAdapter(arrayAdapter);
-
-        arrayAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1,
-                dataOther );
-        items.setAdapter(arrayAdapter);
     }
 }

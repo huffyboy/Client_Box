@@ -356,7 +356,7 @@ public class MainActivity extends AppCompatActivity {
             publishProgress("");
             stillReading = true;
 
-            return "now synced";
+            return "syncing";
         }
 
         @Override

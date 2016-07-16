@@ -35,7 +35,7 @@ import java.util.Locale;
         //      String message = intent.getStringExtra(MainActivity.TIMER_ACTIVITY);
          chronometer = (Chronometer) findViewById(R.id.chronometer);
          startStop = (Button) findViewById(R.id.btn_toggle_start_stop);
-         dateFormat = new SimpleDateFormat("dd/mm/yyyykk:mm", Locale.US);
+         dateFormat = new SimpleDateFormat("MM/dd/yyyy kk:mm:ss z", Locale.US);
          startString = stopString = "";
      }
 
