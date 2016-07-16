@@ -8,7 +8,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.huff6.clientbox.ManualEntryActivity"
-    android:touchscreenBlocksFocus="true">
+    android:touchscreenBlocksFocus="true"
+    android:background="@color/abc_input_method_navigation_guard">
 
     <Button
         android:id="@+id/selecttime"
@@ -21,7 +22,8 @@
         android:layout_marginTop="113dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:backgroundTint="@android:color/holo_blue_light" />
 
     <TextView
         android:id="@+id/set_time"
@@ -30,7 +32,8 @@
         android:gravity="center"
         android:padding="10dp"
         android:layout_alignBottom="@+id/selecttime"
-        android:layout_toRightOf="@+id/selecttime" />
+        android:layout_toRightOf="@+id/selecttime"
+        android:textColor="@color/abc_primary_text_material_dark" />
 
     <Button
         android:id="@+id/selectime2"
@@ -44,7 +47,8 @@
         android:layout_below="@+id/selecttime"
         android:layout_toLeftOf="@+id/set_time"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:backgroundTint="@android:color/holo_blue_light" />
 
     <TextView
         android:id="@+id/set_time2"
@@ -54,7 +58,8 @@
         android:padding="10dp"
         android:layout_alignBottom="@+id/selectime2"
         android:layout_toRightOf="@+id/selectime2"
-        android:layout_toEndOf="@+id/selectime2" />
+        android:layout_toEndOf="@+id/selectime2"
+        android:textColor="@color/abc_primary_text_material_dark" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -67,7 +72,9 @@
         android:hint="Enter description here..."
         android:layout_below="@+id/selectime2"
         android:layout_alignRight="@+id/textView"
-        android:layout_alignEnd="@+id/textView" />
+        android:layout_alignEnd="@+id/textView"
+        android:textColor="@color/abc_primary_text_material_dark"
+        android:textColorHint="@color/abc_primary_text_material_dark" />
 
     <Button
         android:layout_width="wrap_content"
@@ -79,7 +86,8 @@
         android:layout_alignStart="@+id/editText3"
         android:onClick="onClickSubmitManualEntry"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:backgroundTint="@android:color/holo_blue_light" />
 
     <Button
         android:layout_width="wrap_content"
@@ -97,6 +105,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:backgroundTint="@android:color/holo_blue_light" />
 
 </RelativeLayout>

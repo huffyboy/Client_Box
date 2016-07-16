@@ -7,7 +7,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.huff6.clientbox.TimerActivity">
+    tools:context="com.example.huff6.clientbox.TimerActivity"
+    android:background="@color/abc_input_method_navigation_guard">
 
     <Chronometer
         android:layout_width="wrap_content"
@@ -15,7 +16,8 @@
         android:id="@+id/chronometer"
         android:textSize="80dp"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/abc_primary_text_material_dark" />
 
     <Button
         android:layout_width="wrap_content"
@@ -28,7 +30,8 @@
         android:layout_alignStart="@+id/btn_manual_entry"
         android:layout_alignRight="@+id/btn_manual_entry"
         android:layout_alignEnd="@+id/btn_manual_entry"
-        android:onClick="onClickStartStop" />
+        android:onClick="onClickStartStop"
+        android:backgroundTint="@android:color/holo_blue_light" />
 
     <Button
         android:layout_width="wrap_content"
@@ -40,7 +43,8 @@
         android:layout_alignStart="@+id/btn_toggle_start_stop"
         android:layout_alignRight="@+id/btn_toggle_start_stop"
         android:layout_alignEnd="@+id/btn_toggle_start_stop"
-        android:onClick="onClickReset" />
+        android:onClick="onClickReset"
+        android:backgroundTint="@android:color/holo_blue_light" />
 
     <Button
         android:layout_width="wrap_content"
@@ -50,6 +54,7 @@
         android:layout_marginTop="59dp"
         android:layout_below="@+id/chronometer"
         android:layout_centerHorizontal="true"
-        android:onClick="goToManualEntry" />
+        android:onClick="goToManualEntry"
+        android:backgroundTint="@android:color/holo_blue_light" />
 
 </RelativeLayout>

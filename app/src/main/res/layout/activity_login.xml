@@ -7,7 +7,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.huff6.clientbox.LoginActivity">
+    tools:context="com.example.huff6.clientbox.LoginActivity"
+    android:background="@color/abc_input_method_navigation_guard">
 
     <EditText
         android:layout_width="wrap_content"
@@ -19,7 +20,8 @@
         android:layout_marginTop="111dp"
         android:layout_alignRight="@+id/password"
         android:layout_alignEnd="@+id/password"
-        android:text="tyleris@gmail.com" />
+        android:text="firebase@fake.com"
+        android:textColor="@color/abc_primary_text_material_dark" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -30,7 +32,8 @@
         android:layout_below="@+id/username"
         android:layout_centerHorizontal="true"
         android:hint="password"
-        android:text="123456" />
+        android:text="firebase"
+        android:textColor="@color/abc_primary_text_material_dark" />
 
     <Button
         android:layout_width="wrap_content"
@@ -42,7 +45,8 @@
         android:layout_alignStart="@+id/checkBox"
         android:layout_alignRight="@+id/password"
         android:layout_alignEnd="@+id/password"
-        android:onClick="onLogin" />
+        android:onClick="onLogin"
+        android:backgroundTint="@android:color/holo_blue_light" />
 
     <CheckBox
         android:layout_width="wrap_content"
@@ -54,5 +58,7 @@
         android:layout_alignStart="@+id/password"
         android:checked="false"
         android:layout_alignRight="@+id/password"
-        android:layout_alignEnd="@+id/password" />
+        android:layout_alignEnd="@+id/password"
+        android:textColor="@color/abc_primary_text_material_dark"
+        android:visibility="invisible" />
 </RelativeLayout>

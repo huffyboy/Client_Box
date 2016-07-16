@@ -207,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void synchronize(View v) throws ParseException {
 
+            phoneLog.clear();
             syncr.setVisibility(View.INVISIBLE);
             // call update function
             //updateCallInfo();
@@ -364,7 +365,7 @@ public class MainActivity extends AppCompatActivity {
 
             Toast.makeText(getApplicationContext(),result,Toast.LENGTH_LONG).show();
             if (phoneLog.size() == 0) {
-                showMessage("no new client calls", "");
+                showMessage("last synced\n" + getPreferences(), "no new client call logs");
             } else {
                 showMessage("last synced\n" + getPreferences(), getNumbers());
             }
@@ -400,7 +401,7 @@ public class MainActivity extends AppCompatActivity {
         protected String doInBackground(Void... params) {
 
             //
-            Looper.prepare();
+//            Looper.prepare();
             readFromDatabase();
             try {
                 updateCallInfo();
@@ -432,6 +433,8 @@ public class MainActivity extends AppCompatActivity {
             stillReading = true;
 
             syncr.setVisibility(View.VISIBLE);
+            String currentDateandTime = timeStamp.format(new Date());
+            setPreferences(currentDateandTime);
             //stillReading = true;
             //progressBar.setVisibility(View.GONE);
         }

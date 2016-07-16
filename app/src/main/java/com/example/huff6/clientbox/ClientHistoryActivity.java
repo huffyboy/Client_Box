@@ -103,8 +103,8 @@ public class ClientHistoryActivity extends AppCompatActivity {
     void populateListView(){
         List<String> data = new ArrayList<>();
         for (Client client : clientList) {
-            data.add("Name   : " + client.getName() + "\n"
-                    + "Number : " + client.getNum());
+            data.add("\nName   : " + client.getName() + "\n"
+                    + "Number : " + client.getNum() + "\n");
         }
 
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
