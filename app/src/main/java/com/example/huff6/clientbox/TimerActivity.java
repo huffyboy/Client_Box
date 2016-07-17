@@ -15,36 +15,35 @@ import java.util.Locale;
 
  public class TimerActivity extends AppCompatActivity {
 
-     Chronometer chronometer;
-     Button startStop;
-     long time = 0;
-     Boolean start = false;
-     Date startDate;
-     Date stopDate;
-     String startString;
-     String stopString;
-     SimpleDateFormat dateFormat;
-
+     private Chronometer chronometer;
+     private Button startStop;
+     private long time;
+     private Boolean start;
+     private Date startDate;
+     private Date stopDate;
+     private String startString;
+     private String stopString;
+     private SimpleDateFormat dateFormat;
 
 
      @Override
      protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_timer);
-        //      Intent intent = getIntent();
-        //      String message = intent.getStringExtra(MainActivity.TIMER_ACTIVITY);
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_timer);
          chronometer = (Chronometer) findViewById(R.id.chronometer);
-         startStop = (Button) findViewById(R.id.btn_toggle_start_stop);
+         startStop   = (Button)      findViewById(R.id.btn_toggle_start_stop);
          dateFormat = new SimpleDateFormat("MM/dd/yyyy kk:mm:ss z", Locale.US);
          startString = stopString = "";
+         start = false;
+         time = 0;
      }
 
-     void onClickManualEntry(){
-        // go to manual entry
-        time -= 30;
-     }
-
-     long getTime(){
+     /**
+      * get the time
+      *
+      * @return timeValue
+      */
+     public long getTime(){
         return time;
      }
 
@@ -55,14 +54,13 @@ import java.util.Locale;
       */
      public void onClickStartStop(View v){
         if (!start) {
-            startDate = new Date(); //sets current date
-            chronometer.setBase(SystemClock.elapsedRealtime()+time);
+            startDate = new Date();
+            chronometer.setBase(SystemClock.elapsedRealtime() + time);
             chronometer.start();
             startStop.setText("Stop");
             startString = setDateString(startDate);
-        }
-        else {
-            time = chronometer.getBase()-SystemClock.elapsedRealtime();
+        } else {
+            time = chronometer.getBase() - SystemClock.elapsedRealtime();
             chronometer.stop();
             startStop.setText("Start");
             stopDate = new Date();
@@ -77,7 +75,6 @@ import java.util.Locale;
       * @param v the view to allow XML reference
       */
      public void onClickReset(View v){
-
          chronometer.setBase(SystemClock.elapsedRealtime());
          time = 0;
      }
@@ -89,18 +86,15 @@ import java.util.Locale;
       */
      public void goToManualEntry(View v){
          try {
-             //stop the chrono
              chronometer.stop();
              //if the timer is running, then
              if (start){
                  stopDate = new Date();
                  stopString = setDateString(stopDate);
-             }
-             else if (startString.equals("")){
+             } else if (startString.equals("")){
                  Toast.makeText(TimerActivity.this, "Please start your entry.", Toast.LENGTH_SHORT).show();
              }
              Intent intent = new Intent(this, ManualEntryActivity.class);
-             //passing intent - http://stackoverflow.com/questions/19286970/using-intents-to-pass-data-between-activities-in-android
              intent.putExtra("startString", startString);
              intent.putExtra("stopString", stopString);
              startActivity(intent);
@@ -109,10 +103,14 @@ import java.util.Locale;
          }
      }
 
+     /**
+      * turns the date into a string format
+      *
+      * @param date input
+      * @return the date in string formate
+      */
      public String setDateString(Date date){
-         //get date to string
          //https://www.mkyong.com/java/java-how-to-get-current-date-time-date-and-calender/
         return dateFormat.format(date);
      }
-
 }

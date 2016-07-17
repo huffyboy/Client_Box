@@ -1,9 +1,7 @@
 package com.example.huff6.clientbox;
 
-
-
 /**
- * Created by joshu on 6/6/2016
+ * The log object for all data stored for specific calls or client meetings
  */
 public class Log {
     private String startTime;
@@ -18,6 +16,14 @@ public class Log {
         notes     = "";
     }
 
+    /**
+     * Sett all times in the log
+     *
+     * @param sTime the start time
+     * @param eTime the end time
+     * @param dur the duration in seconds
+     * @param inputNotes the notes for the log
+     */
     public void setLog(String sTime, String eTime, long dur, String inputNotes) {
         startTime = sTime;
         stopTime = eTime;
@@ -29,30 +35,65 @@ public class Log {
         return startTime;
     }
 
+    /**
+     * Stop time getter
+     *
+     * @return the stop time
+     */
     public String getStopTime() {
         return stopTime;
     }
 
+    /**
+     * Duration getter
+     *
+     * @return the duration
+     */
     public long getDuration() {
         return duration;
     }
 
+    /**
+     * Notes getter
+     *
+     * @return the notes
+     */
     public String getNotes() {
         return notes;
     }
 
+    /**
+     * Start time setter
+     *
+     * @param input the start time
+     */
     public void setStartTime(String input) {
         startTime = input;
     }
 
+    /**
+     * Stop time setter
+     *
+     * @param input the stop time
+     */
     public void setStopTime(String input) {
         stopTime = input;
     }
 
+    /**
+     * Duration setter
+     *
+     * @param input the duration
+     */
     public void setDuration(int input) {
         duration = input;
     }
 
+    /**
+     * Notes setter
+     *
+     * @param input the notes
+     */
     public void setNotes(String input) {
         notes = input;
     }

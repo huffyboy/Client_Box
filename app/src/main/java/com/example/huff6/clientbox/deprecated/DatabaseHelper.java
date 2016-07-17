@@ -1,4 +1,4 @@
-package com.example.huff6.clientbox;
+package com.example.huff6.clientbox.deprecated;
 
 import android.content.ContentValues;
 import android.content.Context;

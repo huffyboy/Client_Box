@@ -1,4 +1,4 @@
-package com.example.huff6.clientbox;
+package com.example.huff6.clientbox.deprecated;
 
 import java.util.ArrayList;
 

@@ -18,28 +18,15 @@ import com.google.firebase.database.FirebaseDatabase;
 public class ClientBoxApplication extends Application {
 
     public static final String TAG = "Application class";
-
-    //set up a path to the url here
-    //private static final String FIREBASE_URL = "https://proof-of-concept-b3c8b.firebaseio.com/";
-    //connect to the firebase
-    //Firebase firebaseDb;
     FirebaseAuth auth;
     FirebaseAuth.AuthStateListener authListener;
     FirebaseDatabase database;
-
-    DatabaseReference clientRef;
-    DatabaseReference numClientRef;
-    DatabaseReference logRef;
+    DatabaseReference clientRef, numClientRef, logRef;
 
 
     @Override
     public void onCreate() {
         super.onCreate();
-        //First thing that you have to do is set the android context
-        //Firebase.setAndroidContext(this);//use this to make things easier
-        //Connect set here
-        //firebaseDb = new Firebase(FIREBASE_URL);
-
         auth = FirebaseAuth.getInstance();
         authListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -57,7 +44,7 @@ public class ClientBoxApplication extends Application {
 
         database = FirebaseDatabase.getInstance();
         numClientRef = database.getReference("numClients");
-        clientRef = database.getReference("Clients");
-        logRef = database.getReference("client logs");
+        clientRef    = database.getReference("Clients");
+        logRef       = database.getReference("client logs");
     }
 }

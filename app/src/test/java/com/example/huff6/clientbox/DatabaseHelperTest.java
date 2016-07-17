@@ -3,6 +3,8 @@ package com.example.huff6.clientbox;
 import android.database.Cursor;
 import android.test.AndroidTestCase;
 
+import com.example.huff6.clientbox.deprecated.DatabaseHelper;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +19,7 @@ public class DatabaseHelperTest extends AndroidTestCase {
     public static final int NUM_ITEMS_TO_TEST = 25;
     private String[] name, phone, startTime, endTime, duration, notes;
     private DatabaseHelper databaseHelper;
-    Generator gen;
+    private Generator gen;
 
     // CLASS to generate random strings of certain lengths
     class Generator {

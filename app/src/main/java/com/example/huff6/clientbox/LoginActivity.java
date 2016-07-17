@@ -12,13 +12,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 
+/**
+ * The login activity
+ */
 public class LoginActivity extends AppCompatActivity {
 
     public static final String TAG = "Login Activity";
-
-    //CheckBox stayLoggedIn;
-    EditText editUsername;
-    EditText editPassword;
+    EditText editUsername, editPassword;
     protected ClientBoxApplication app;
 
 
@@ -48,7 +48,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
     /**
-     *
      * on login allows for the user to request access to the database
      * and move on to the main activity
      *
@@ -70,7 +69,6 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        android.util.Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
 
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
@@ -85,23 +83,5 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
                 });
-
-        //stayLoggedIn = (CheckBox) findViewById(R.id.checkBox);
-
-        //Simply write a test string to the DB - this should be where authentication goes
-
-        //String test = "Testing the DB";
-        //app.firebaseDb.push().setValue(test);
-
-        //if not valid display error message here
-
-        //it valid connect to database and move on to main page
-        /*try {
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra(MainActivity.MAIN_ACTIVITY, "");
-            startActivity(intent);
-        } catch(Exception e) {
-            System.out.println(e.getMessage());
-        }*/
     }
 }

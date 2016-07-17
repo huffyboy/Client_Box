@@ -1,8 +1,8 @@
 package com.example.huff6.clientbox;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -11,15 +11,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.List;
-
+/**
+ * The add client activity page
+ */
 public class AddClientActivity extends AppCompatActivity {
 
-    EditText name;
-    EditText phone;
-    List<Client> clientList;
+    private long numClients;
     protected ClientBoxApplication app;
-    long numClients;
 
 
     @Override
@@ -27,9 +25,7 @@ public class AddClientActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_client);
         app = (ClientBoxApplication) getApplication();
-
-        readFromDatabase();
-    }
+        readFromDatabase();    }
 
 
     /**
@@ -39,18 +35,20 @@ public class AddClientActivity extends AppCompatActivity {
      * @param v the view to allow XML reference
      */
     public void addClient(View v) {
-        name = (EditText) findViewById(R.id.name);
-        phone = (EditText) findViewById(R.id.phone);
+        EditText name = (EditText) findViewById(R.id.name);
+        EditText phone = (EditText) findViewById(R.id.phone);
+
+        // only add if all inputs are filled
+        assert phone != null;
+        assert name != null;
         if (phone.getText().toString().matches("") || name.getText().toString().matches("")) {
             Toast.makeText(AddClientActivity.this, "please fill name and number", Toast.LENGTH_SHORT).show();
         } else if (phone.getText().length() < 10) {
             Toast.makeText(AddClientActivity.this, "please fill out 10 digits of number", Toast.LENGTH_SHORT).show();
-        }
-        else{
+        } else{
             //add client to database
             app.clientRef.child(phone.getText().toString()).child("name").setValue(name.getText().toString());
             app.numClientRef.setValue(numClients + 1);
-            //if added:
             Toast.makeText(AddClientActivity.this, "client added", Toast.LENGTH_SHORT).show();
 
             //go back to main page
@@ -64,8 +62,9 @@ public class AddClientActivity extends AppCompatActivity {
         }
     }
 
-
-
+    /**
+     * Read the number of clients so that we can update it
+     */
     private void readFromDatabase(){
         ValueEventListener numListener = new ValueEventListener() {
             @Override
@@ -79,16 +78,4 @@ public class AddClientActivity extends AppCompatActivity {
         };
         app.numClientRef.addValueEventListener(numListener);
     }
-
-    //not used
-    public void onChangeValidateName()
-    {
-    }
-
-
-    //not used
-    public void onChangeValidateNumber()
-    {
-    }
-
 }

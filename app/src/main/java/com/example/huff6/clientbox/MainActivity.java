@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Looper;
 import android.provider.CallLog;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
@@ -20,7 +19,6 @@ import android.widget.Toast;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -29,11 +27,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-
+/**
+ * Main menu activity
+ */
 public class MainActivity extends AppCompatActivity {
-
-    //We need a thread singleton object here
-    //DatabaseHelper myDb;
 
     public static final String MAIN_ACTIVITY          = "com.example.huff6.clientbox.MainActivity";
     public static final String ADD_CLIENT_ACTIVITY    = "com.example.huff6.clientbox.AddClientActivity";
@@ -41,35 +38,29 @@ public class MainActivity extends AppCompatActivity {
     public static final String MANUAL_ENTRY_ACTIVITY  = "com.example.huff6.clientbox.ManualEntryActivity";
     public static final String CLIENT_LOOKUP_ACTIVITY = "com.example.huff6.clientbox.ClientLookupActivity";
     public static final String preferences = "MyPrefsFile";
+
     protected ClientBoxApplication app;
-    String check;
-    long numClients;
-    List<Client> clientList;
-    ArrayList<com.example.huff6.clientbox.Log> phoneLog;
-
-    Button syncr;
-
-    boolean stillReading;
-
-    SimpleDateFormat timeStamp = new SimpleDateFormat("yyyy/MM/dd 'at' HH:mm:ss z");
+    private String callNotes;
+    private List<Client> clientList;
+    private ArrayList<com.example.huff6.clientbox.Log> phoneLog;
+    private Button syncr;
+    SimpleDateFormat timeStamp;
+    SimpleDateFormat dateFormat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //myDb = new DatabaseHelper(this);
+        app = (ClientBoxApplication)getApplication();
+        timeStamp = new SimpleDateFormat("yyyy/MM/dd 'at' HH:mm:ss z", Locale.US);
         clientList = new ArrayList<>();
+        dateFormat = new SimpleDateFormat("dd/mm/yyyy kk:mm:ss z", Locale.US);
 
         syncr = (Button) findViewById(R.id.button4);
+        assert syncr != null;
         syncr.setVisibility(View.INVISIBLE);
 
-        stillReading = false;
-
-        //new thread
-
-//        Looper.prepare();
-        new loadTask().execute();
-
+        new startupSync().execute();
     }
 
     /**
@@ -136,35 +127,44 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    void updateCallInfo() throws ParseException {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
+    /**
+     * Gets the phone logs from the phone and stores the good ones in
+     * the phoneLog list
+     *
+     * @throws ParseException
+     */
+    void extractPhoneLogs() throws ParseException {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG)
+                != PackageManager.PERMISSION_GRANTED) {
             Log.w("MainActivity","No permissions");
+            Toast.makeText(MainActivity.this, "Need permissions for reading your call history",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
-
-
         Cursor managedCursor = getContentResolver().query(CallLog.Calls.CONTENT_URI,
                 null, null, null, null);
 
         assert managedCursor != null;
-        int number = managedCursor.getColumnIndex(CallLog.Calls.NUMBER);
-        int type = managedCursor.getColumnIndex(CallLog.Calls.TYPE);
-        int date = managedCursor.getColumnIndex(CallLog.Calls.DATE);
+        int number   = managedCursor.getColumnIndex(CallLog.Calls.NUMBER);
+        int type     = managedCursor.getColumnIndex(CallLog.Calls.TYPE);
+        int date     = managedCursor.getColumnIndex(CallLog.Calls.DATE);
         int duration = managedCursor.getColumnIndex(CallLog.Calls.DURATION);
-        phoneLog = new ArrayList<com.example.huff6.clientbox.Log>();
+        phoneLog = new ArrayList<>();
         com.example.huff6.clientbox.Log tempLog = new com.example.huff6.clientbox.Log();
+        Date checkDate = timeStamp.parse(getLastSyncTime());
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy kk:mm:ss z", Locale.US);
-
-        Date checkDate = timeStamp.parse(getPreferences());
+        // extract information out of the phone logs stored in the phone
         while (managedCursor.moveToNext()) {
             String phNumber = managedCursor.getString(number);
             String callType = managedCursor.getString(type);
             String callDate = managedCursor.getString(date);
             Date callDayTime = new Date(Long.valueOf(callDate));
-            check = phNumber.substring(2);
 
+            // store phone number in call notes temporarily
+            callNotes = phNumber.substring(2);
             String callDuration = managedCursor.getString(duration);
+
+            // decipher what kind of call it was
             String dir = "";
             int dircode = Integer.parseInt(callType);
             switch (dircode) {
@@ -181,23 +181,18 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
 
-            //phoneLog.add(check);
-            //https://www.mkyong.com/java/how-to-compare-dates-in-java/
-            if(checkDate.compareTo(callDayTime)<0) {
-                System.out.println("CALL AFTER TIME");
-                // ADD TO TABLE
+            // only add calls that were after the last synced time and calls that weren't missed
+            //      date comparison copied from
+            //      https://www.mkyong.com/java/how-to-compare-dates-in-java/
+            if(checkDate.compareTo(callDayTime) < 0) {
                 if (!dir.equals("MISSED")) {
-
-                    check = phNumber.substring(2);
-
-                    long l = callDayTime.getTime() + Integer.parseInt(callDuration)*1000;
+                    long l = callDayTime.getTime() + Integer.parseInt(callDuration) * 1000;
                     Date d = new Date(l);
-                    System.out.println();
                     tempLog.setLog(
-                            sdf.format(callDayTime),
-                            sdf.format(d),
+                            dateFormat.format(callDayTime),
+                            dateFormat.format(d),
                             Long.parseLong(callDuration),
-                            check);
+                            callNotes);
                     phoneLog.add(tempLog);
                 }
             }
@@ -205,52 +200,53 @@ public class MainActivity extends AppCompatActivity {
         managedCursor.close();
     }
 
+    /**
+     * Syncronize button function to push logs to the database
+     *
+     * @param v the view to allow XML access
+     * @throws ParseException
+     */
     public void synchronize(View v) throws ParseException {
-
-            phoneLog.clear();
-            syncr.setVisibility(View.INVISIBLE);
-            // call update function
-            //updateCallInfo();
-
-            //new thread
-            new sync().execute();
-            stillReading = false;
-            //set the preferences here
-
-            String currentDateandTime = timeStamp.format(new Date());
-            //setPreferences(currentDateandTime);
-
-            //timeStamp.parse(getPreferences()).toString()
+        phoneLog.clear();
+        syncr.setVisibility(View.INVISIBLE);
+        new sync().execute();
     }
 
-    private String getNumbers()
-    {
-        //clientList = new ArrayList<>();
+    /**
+     * Pushes the client logs from phoneLog to the database
+     *
+     * @return a string containing a list of all calls pushed to the database
+     */
+    private String pushLogsToDatabase() {
         String numbers = "";
         List<Integer> temp = new ArrayList<>();
-        System.out.println("BEFORE CHECKING PHONE NUMS");
-        for (int i = 0; i < phoneLog.size(); i++){
-            int num = checkNumbers(phoneLog.get(i).getNotes());
-            if (num > -1) {
 
-                //add to the database
+        for (int i = 0; i < phoneLog.size(); i++){
+            int index = findNumberInDatabase(phoneLog.get(i).getNotes());
+            // add the the database if the phone number is a client
+            if (index > -1) {
                 com.example.huff6.clientbox.Log tempLog = phoneLog.get(i);
-                temp.add(num);
+                temp.add(index);
                 String phoneNumber = tempLog.getNotes();
                 tempLog.setNotes("phone call");
                 app.clientRef.child(phoneNumber).child("Logs").push().setValue(tempLog);
             }
         }
-
+        // create the string of logs that were pushed ot the database
         for (int i = 0; i < temp.size(); i++){
-            numbers += clientList.get(temp.get(i)).getName() + " " + clientList.get(temp.get(i)).getNum() + "\n";
+            numbers += clientList.get(temp.get(i)).getName() + " " +
+                    clientList.get(temp.get(i)).getNum() + "\n";
         }
         return numbers;
     }
 
-
-    private int checkNumbers(String number) {
-        //System.out.println("CHECK NUMBERES");
+    /**
+     * Checks if the phone number is a client in the database
+     *
+     * @param number the phone number you want to lookup in the database
+     * @return the position in the database, or -1 if not found
+     */
+    private int findNumberInDatabase(String number) {
         for (int i = 0; i < clientList.size(); i++) {
             if (clientList.get(i).getNum().equals(number)) {
                 System.out.println("FOUND");
@@ -260,6 +256,14 @@ public class MainActivity extends AppCompatActivity {
         return -1;
     }
 
+    /**
+     * Create a popup message to the screen
+     * copied from tutorial given by
+     *      https://www.youtube.com/channel/UCs6nmQViDpUw0nuIx9c_WvA
+     *
+     * @param title the title of the popup
+     * @param Message the popup text
+     */
     private void showMessage(String title, String Message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(true);
@@ -268,27 +272,36 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
-//http://stackoverflow.com/questions/23024831/android-shared-preferences-example
-    private void setPreferences(String date) {
+    /**
+     * Set the last synced time
+     *
+     * @param date a date in string format
+     */
+    private void setLastSyncTime(String date) {
+        //http://stackoverflow.com/questions/23024831/android-shared-preferences-example
         SharedPreferences.Editor editor = getSharedPreferences(preferences, MODE_PRIVATE).edit();
         editor.putString("name", date);
-        editor.commit();
+        editor.apply();
     }
 
-    private String getPreferences() {
-
+    /**
+     * Get the last synced time
+     *
+     * @return a date in string format of last time phone synced to the database
+     */
+    private String getLastSyncTime() {
         SharedPreferences prefs = getSharedPreferences(preferences, MODE_PRIVATE);
-        String restoredText = prefs.getString("name", null);
-        if (restoredText != null) {
-            return restoredText;
-        }
-        else {
+        String lastSyncTime = prefs.getString("name", null);
+        if (lastSyncTime != null) {
+            return lastSyncTime;
+        } else {
             return "none";
         }
     }
 
-
-    // Read from the database
+    /**
+     * Read the clients from the database
+     */
     public void readFromDatabase() {
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
@@ -321,122 +334,76 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         app.clientRef.addChildEventListener(childEventListener);
-
-        ValueEventListener numListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                numClients = dataSnapshot.getValue(Long.class);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        };
-        app.numClientRef.addValueEventListener(numListener);
     }
 
+    /**
+     * Background startup automatic syncing
+     */
+    class startupSync extends AsyncTask<Void,String,String> {
 
+        @Override
+        protected void onPreExecute() {
+            callNotes = "no new updates";
+        }
 
-
-    //async task..
-
-
-    class sync extends  loadTask{
         @Override
         protected String doInBackground(Void... params) {
-
-            //
-            //Looper.prepare();
-
+            readFromDatabase();
             try {
-                updateCallInfo();
+                extractPhoneLogs();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            pushLogsToDatabase();
+            publishProgress("");
+            return "updated";
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(getApplicationContext(),result,Toast.LENGTH_LONG).show();
+            syncr.setVisibility(View.VISIBLE);
+            String currentDateandTime = timeStamp.format(new Date());
+            setLastSyncTime(currentDateandTime);
+        }
+    }
+
+    /**
+     * Manual background syncing
+     */
+    class sync extends startupSync {
+        @Override
+        protected String doInBackground(Void... params) {
+            try {
+                extractPhoneLogs();
             } catch (ParseException e) {
                 e.printStackTrace();
             }
 
             publishProgress("");
-            stillReading = true;
 
             return "syncing";
         }
 
         @Override
         protected void onPostExecute(String result) {
-
             Toast.makeText(getApplicationContext(),result,Toast.LENGTH_LONG).show();
             if (phoneLog.size() == 0) {
-                showMessage("last synced\n" + getPreferences(), "no new client call logs");
+                showMessage("last synced\n" + getLastSyncTime(), "no new client call logs");
             } else {
-                showMessage("last synced\n" + getPreferences(), getNumbers());
+                showMessage("last synced\n" + getLastSyncTime(), pushLogsToDatabase());
             }
 
+            // save the time we last synced to only store new logs in the database
             String currentDateandTime = timeStamp.format(new Date());
-            setPreferences(currentDateandTime);
+            setLastSyncTime(currentDateandTime);
 
             syncr.setVisibility(View.VISIBLE);
-        }
-    }
-    //load task AsyncTask method
-    class loadTask extends AsyncTask<Void,String,String> {
-
-        @Override
-        protected void onPreExecute() {
-           //progress bar
-            /*adapter = (ArrayAdapter) lv.getAdapter();
-
-            // set progress bar
-            progressBar = (ProgressBar) findViewById(R.id.progressBar);
-            progressBar.setMax(10);
-            progressBar.setProgress(0);
-            progressBar.setVisibility(View.VISIBLE);
-            count = 0;*/
-            app = (ClientBoxApplication)getApplication();
-            check = "no new updates";
-
-
-
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-
-            //
-//            Looper.prepare();
-            readFromDatabase();
-            try {
-                updateCallInfo();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            getNumbers();
-
-            publishProgress("");
-
-            return "updated";
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-
-            //progress bar
-            /*
-            adapter.add(values[0]);
-            count++;
-            progressBar.setProgress(count);
-            */
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-
-            Toast.makeText(getApplicationContext(),result,Toast.LENGTH_LONG).show();
-            stillReading = true;
-
-            syncr.setVisibility(View.VISIBLE);
-            String currentDateandTime = timeStamp.format(new Date());
-            setPreferences(currentDateandTime);
-            //stillReading = true;
-            //progressBar.setVisibility(View.GONE);
         }
     }
 }

@@ -3,35 +3,29 @@ package com.example.huff6.clientbox;
 import android.app.Dialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.SynchronousQueue;
 
+/**
+ * The client history activity
+ */
 public class ClientHistoryActivity extends AppCompatActivity {
 
-    public static final String TAG = "Client Lookup Activity";
     protected ClientBoxApplication app;
-    List<Client> clientList;
-    List<com.example.huff6.clientbox.Log> logList;
-    //List<String> clientString;
-    //private long numClients;
-    ListView lv;
-    ListView modeList;
-
+    private List<Client> clientList;
+    private List<Log> logList;
+    private ListView listView, logsListView;
 
 
     @Override
@@ -39,20 +33,65 @@ public class ClientHistoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_client_history);
         clientList = new ArrayList<>();
-        logList = new ArrayList<>();
+        logList    = new ArrayList<>();
+        app = (ClientBoxApplication)getApplication();
+        listView = (ListView) findViewById(R.id.listView);
 
-        new loadTask().execute();
-        //populateListView();
-
-        setList();
-        //populateLog();
+        new readClientsTask().execute();
+        makeListViewClickable();
     }
 
-    private void populateLog() {
+    /**
+     * Make the listview a list of clickable clients
+     */
+    private void makeListViewClickable(){
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?>adapter,View v, int position,long l){
+                // get title
+                String[] title = (listView.getItemAtPosition(position)).toString().replace("Name   : ","").split("\\\n");
+                String phoneNumber = (listView.getItemAtPosition(position)).toString().replaceAll("\\D","");
+                // reset log list
+                logList.clear();
+                readFromDatabase(true, phoneNumber);
+                // create logs list pop up
+                AlertDialog.Builder builder = new AlertDialog.Builder(ClientHistoryActivity.this);
+                builder.setTitle(title[0]);
+                logsListView = new ListView(ClientHistoryActivity.this);
+                builder.setView(logsListView);
+                final Dialog dialog = builder.create();
+                dialog.show();
+
+                new readLogsTask().execute();
+            }
+        });
+    }
+
+    /**
+     * Populate the listview with clients from the database
+     */
+    void populateClientList(){
+        List<String> data = new ArrayList<>();
+        for (Client client : clientList) {
+            data.add("\nName   : " + client.getName() + "\n"
+                    + "Number : " + client.getNum() + "\n");
+        }
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_list_item_1,
+                data );
+
+        listView.setAdapter(arrayAdapter);
+    }
+
+    /**
+     * Populate the listview with logs from the database for a client
+     */
+    private void populateLogList() {
         List<String> data = new ArrayList<>();
         for (Log log : logList) {
             data.add( "\nTime : " + log.getStartTime() + "\n"
-                    //+ "End Time   : " + log.getStartTime() + "\n"
                     + "Duration : " + log.getDuration() + " seconds\n"
                     + "Notes : " + log.getNotes() + "\n");
         }
@@ -65,65 +104,20 @@ public class ClientHistoryActivity extends AppCompatActivity {
                 android.R.layout.simple_list_item_1,
                 data );
 
-        modeList.setAdapter(arrayAdapter);
+        logsListView.setAdapter(arrayAdapter);
     }
 
-    private void setList(){
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-            @Override
-            public void onItemClick(AdapterView<?>adapter,View v, int position,long l){
-                // set textView
-
-                String[] title = (lv.getItemAtPosition(position)).toString().replace("Name   : ","").split("\\\n");
-                String phoneNumber = (lv.getItemAtPosition(position)).toString().replaceAll("\\D","");
-                System.out.println(phoneNumber);
-                logList.clear();
-                readFromDatabase(true, phoneNumber);
-                AlertDialog.Builder builder = new AlertDialog.Builder(ClientHistoryActivity.this);
-                builder.setTitle(title[0]);
-
-
-                modeList = new ListView(ClientHistoryActivity.this);
-                builder.setView(modeList);
-                final Dialog dialog = builder.create();
-                dialog.show();
-                new loadLogsTask().execute();
-                //dialog.cancel();
-                //clientPhone = (String) (items.getItemAtPosition(position));
-
-            }
-        });
-
-
-    }
-
-
-    //this function is to populate the listview with the
-    //database information
-    void populateListView(){
-        List<String> data = new ArrayList<>();
-        for (Client client : clientList) {
-            data.add("\nName   : " + client.getName() + "\n"
-                    + "Number : " + client.getNum() + "\n");
-        }
-
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1,
-                data );
-
-        lv.setAdapter(arrayAdapter);
-    }
-
-    // Read from the database
+    /**
+     * Reads either all the clients or the logs of a specific client
+     *
+     * @param readLogs are you reading the logs?
+     * @param number the number for the client you want to read logs from
+     */
     public void readFromDatabase(final boolean readLogs, String number) {
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                //android.util.Log.d(TAG, "onChildAdded:" + dataSnapshot.getKey());
-
                 if (!readLogs) {
-                    // A new client has been added, add it to the displayed list
                     Client theClient = dataSnapshot.getValue(Client.class);
                     theClient.setNum(dataSnapshot.getKey());
                     clientList.add(theClient);
@@ -133,7 +127,6 @@ public class ClientHistoryActivity extends AppCompatActivity {
                     logList.add(theLog);
                 }
             }
-
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
@@ -151,64 +144,53 @@ public class ClientHistoryActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
             }
         };
+
         if (!readLogs) {
             app.clientRef.addChildEventListener(childEventListener);
         } else {
             app.clientRef.child(number).child("Logs").addChildEventListener(childEventListener);
         }
-
-
     }
 
-
-
-
-    //load task AsyncTask method
-    class loadTask extends AsyncTask<Void,String,String> {
+    /**
+     * A class for reading clients in the background
+     */
+    class readClientsTask extends AsyncTask<Void,String,String> {
         @Override
         protected void onPreExecute() {
-
-            app = (ClientBoxApplication)getApplication();
-            lv = (ListView) findViewById(R.id.listView);
         }
 
         @Override
         protected String doInBackground(Void... params) {
             readFromDatabase(false, "");
-            populateListView();
+            populateClientList();
             return "done";
         }
 
         @Override
         protected void onProgressUpdate(String... values) {
-            populateListView();
+            populateClientList();
         }
 
         @Override
         protected void onPostExecute(String result) {
-            populateListView();
+            populateClientList();
         }
     }
 
-
-    //load task AsyncTask method
-    class loadLogsTask extends loadTask {
-
-        //private ListView logsView;
-
-        //public loadLogsTask(ListView inputView) {
-        //    logsView = inputView;
-        //}
+    /**
+     * A class for reading logs in the background
+     */
+    class readLogsTask extends readClientsTask {
 
         @Override
         protected String doInBackground(Void... params) {
-            //readFromDatabase(false, "");
             return "done";
         }
 
         @Override
         protected void onPostExecute(String result) {
-            populateLog();
+            populateLogList();
         }
     }
 }

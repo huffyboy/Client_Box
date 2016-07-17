@@ -1,4 +1,4 @@
-package com.example.huff6.clientbox;
+package com.example.huff6.clientbox.deprecated;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.huff6.clientbox.R;
 
 import java.util.Date;
 

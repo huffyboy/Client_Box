@@ -4,13 +4,15 @@ package com.example.huff6.clientbox;
 
 import org.junit.Test;
 
-import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 
 public class ManualEntryActivityTest {
 
+    /**
+     * Function has been deprecated
+     *
     @Test
     public void updateTest() {
         // update(Time, Time) : void
@@ -23,17 +25,19 @@ public class ManualEntryActivityTest {
 
         assertThat(temp1, is(temp1));
         assertThat(temp2 , is(temp2));
-    }
+    }*/
 
-
+    /**
+     * Function has been deprecated
+     *
     @Test
     public void validateTimeTest() {
-        // validateTime( start Time, stop Time) : void
+        // checkValidTimes( start Time, stop Time) : void
 
         ManualEntryActivity MEA = new ManualEntryActivity();
-        MEA.validateTime();
+        MEA.checkValidTimes();
 
         assertTrue(MEA.getIsValid());
-    }
+    }*/
 
 }

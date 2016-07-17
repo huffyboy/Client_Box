@@ -1,9 +1,8 @@
-package com.example.huff6.clientbox;
+package com.example.huff6.clientbox.deprecated;
 
-import java.util.AbstractQueue;
+import com.example.huff6.clientbox.Log;
+
 import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Queue;
 
 /**

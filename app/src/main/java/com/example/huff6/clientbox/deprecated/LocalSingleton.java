@@ -1,7 +1,9 @@
-package com.example.huff6.clientbox;
+package com.example.huff6.clientbox.deprecated;
 
 import android.content.Context;
 import android.database.Cursor;
+
+import com.example.huff6.clientbox.deprecated.DatabaseHelper;
 
 /**
  * Created by huff6 on 6/18/2016
