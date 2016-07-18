@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         app = (ClientBoxApplication)getApplication();
         timeStamp = new SimpleDateFormat("yyyy/MM/dd 'at' HH:mm:ss z", Locale.US);
         clientList = new ArrayList<>();
-        dateFormat = new SimpleDateFormat("dd/mm/yyyy kk:mm:ss z", Locale.US);
+        dateFormat = new SimpleDateFormat("MM/dd/yyyy kk:mm:ss z", Locale.US);
 
         syncr = (Button) findViewById(R.id.button4);
         assert syncr != null;
