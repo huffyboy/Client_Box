@@ -153,6 +153,16 @@ public class ClientHistoryActivity extends AppCompatActivity {
     }
 
     /**
+     * Reload the client list on click if the page glitches
+     * and doesn't load the data
+     *
+     * @param v the view for XML reference
+     */
+    public void redoClientList(View v){
+        populateClientList();
+    }
+
+    /**
      * A class for reading clients in the background
      */
     class readClientsTask extends AsyncTask<Void,String,String> {
@@ -192,10 +202,5 @@ public class ClientHistoryActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             populateLogList();
         }
-    }
-
-    public void redoClientList(View v){
-        populateClientList();
-
     }
 }

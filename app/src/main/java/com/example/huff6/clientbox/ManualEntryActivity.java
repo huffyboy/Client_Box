@@ -59,8 +59,8 @@ public class ManualEntryActivity extends AppCompatActivity {
         stopTimeText   = (TextView) findViewById(R.id.end_time);
         app = (ClientBoxApplication)getApplication();
         phoneNumberList = new ArrayList<>();
-        clientList   = new ArrayList<>();
-        clientString = new ArrayList<>();
+        clientList      = new ArrayList<>();
+        clientString    = new ArrayList<>();
         dateFormat = new SimpleDateFormat("MM/dd/yyyy kk:mm:ss z", Locale.US);
         startId        = true;
         clientSelected = false;
