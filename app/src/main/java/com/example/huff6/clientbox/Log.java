@@ -17,7 +17,7 @@ public class Log {
     }
 
     /**
-     * Sett all times in the log
+     * Set all times in the log
      *
      * @param sTime the start time
      * @param eTime the end time
