@@ -161,7 +161,8 @@ public class MainActivity extends AppCompatActivity {
             Date callDayTime = new Date(Long.valueOf(callDate));
 
             // store phone number in call notes temporarily
-            callNotes = phNumber.substring(2);
+            // only get the last 10 digits
+            callNotes = phNumber.substring(phNumber.length()-10,phNumber.length());
             String callDuration = managedCursor.getString(duration);
 
             // decipher what kind of call it was
