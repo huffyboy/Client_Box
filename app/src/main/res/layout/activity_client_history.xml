@@ -30,5 +30,6 @@
         android:textColor="@color/abc_primary_text_material_dark"
         android:textSize="30dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:onClick="redoClientList" />
 </RelativeLayout>

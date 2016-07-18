@@ -193,4 +193,9 @@ public class ClientHistoryActivity extends AppCompatActivity {
             populateLogList();
         }
     }
+
+    public void redoClientList(View v){
+        populateClientList();
+
+    }
 }
